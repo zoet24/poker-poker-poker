@@ -7,6 +7,14 @@ const table = document.getElementById("table");
 const tableWidth = table.offsetWidth;
 const tableHeight = table.offsetHeight;
 
+//
+const suitSymbols = {
+  spade: "\u2660", // ♠
+  heart: "\u2665", // ♥
+  diamond: "\u2666", // ♦
+  club: "\u2663", // ♣
+};
+
 // Create player elements
 users.forEach((user, index) => {
   // Create player element
@@ -36,7 +44,12 @@ users.forEach((user, index) => {
   if (user.showCards) {
     user.hand.forEach((card, i) => {
       const cardElement = document.createElement("div");
-      cardElement.textContent = card;
+
+      if ((card.suit == "heart") | (card.suit == "diamond")) {
+        cardElement.classList.add("card-red");
+      }
+
+      cardElement.textContent = card.value + suitSymbols[card.suit];
       if (i === 0) {
         card1.appendChild(cardElement);
       } else {

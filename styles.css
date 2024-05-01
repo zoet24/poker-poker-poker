@@ -38,6 +38,10 @@
   border-style: dashed;
 }
 
+.card-red {
+  color: #f00;
+}
+
 .cards-player {
   display: flex;
   position: absolute;

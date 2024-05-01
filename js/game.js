@@ -10,7 +10,7 @@ class Game {
   }
 
   startGame() {
-    //   this.deck.shuffleDeck()
+    this.deck.shuffleDeck();
     console.log("Initial deck:", this.deck);
     console.log("Initial users:", this.users);
     console.log("Initial community cards:", this.communityCards);
@@ -72,5 +72,5 @@ const game = new Game();
 game.startGame();
 game.dealPlayerCards();
 game.dealFlop();
-game.dealTurn()
-game.dealRiver()
+game.dealTurn();
+game.dealRiver();
