@@ -1,18 +1,21 @@
 import { players } from "./players.js";
 
-// Create table and player elements
 const table = document.getElementById("table");
-
-// Calculate table dimensions
 const tableWidth = table.offsetWidth;
 const tableHeight = table.offsetHeight;
 
-const suitSymbols = {
-  spade: "\u2660", // ♠
-  heart: "\u2665", // ♥
-  diamond: "\u2666", // ♦
-  club: "\u2663", // ♣
-};
+function calculatePlayerPosition(playerContainer, index) {
+  const angle = (360 / players.length) * index + 90;
+  const radians = (angle * Math.PI) / 180;
+  const playerWidth = playerContainer.offsetWidth;
+  const playerHeight = playerContainer.offsetHeight;
+  const radius =
+    Math.min(tableWidth, tableHeight) / 2 -
+    Math.max(playerWidth, playerHeight) / 2;
+  const x = Math.cos(radians) * radius + tableWidth / 2 - playerWidth / 2;
+  const y = Math.sin(radians) * radius + tableHeight / 2 - playerHeight / 2;
+  return { x, y, angle };
+}
 
 // Create player elements
 players.forEach((player, index) => {
@@ -43,17 +46,8 @@ players.forEach((player, index) => {
   // Add player to table
   table.appendChild(playerContainer);
 
-  // Calculate player position
-  const angle = (360 / players.length) * index + 90;
-  const radians = (angle * Math.PI) / 180;
-  const playerWidth = playerContainer.offsetWidth;
-  const playerHeight = playerContainer.offsetHeight;
-  const radius =
-    Math.min(tableWidth, tableHeight) / 2 -
-    Math.max(playerWidth, playerHeight) / 2;
-  const x = Math.cos(radians) * radius + tableWidth / 2 - playerWidth / 2;
-  const y = Math.sin(radians) * radius + tableHeight / 2 - playerHeight / 2;
   // Set player position
+  const { x, y, angle } = calculatePlayerPosition(playerContainer, index);
   playerContainer.style.left = x + "px";
   playerContainer.style.top = y + "px";
   playerContainer.style.transform = `rotate(${angle - 90}deg)`;

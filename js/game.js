@@ -8,6 +8,9 @@ const suitSymbols = {
   club: "\u2663", // ♣
 };
 
+const deckElement = document.getElementById("deck");
+const discardElement = document.getElementById("discard");
+
 class Game {
   constructor() {
     this.deck = new Deck();
@@ -18,6 +21,9 @@ class Game {
 
   startGame() {
     this.deck.shuffleDeck();
+    deckElement.classList.remove("card-outline");
+
+    deckElement.textContent = "Deck (" + this.deck.cards.length + ")";
     console.log("Initial deck:", this.deck);
     console.log("Initial players:", this.players);
     console.log("Initial community cards:", this.communityCards);
@@ -49,6 +55,7 @@ class Game {
       });
     });
 
+    deckElement.textContent = "Deck (" + this.deck.cards.length + ")";
     console.log("dealPlayerCards deck:", this.deck);
     console.log("dealPlayerCards players:", this.players);
     console.log("dealPlayerCards community cards:", this.communityCards);
@@ -58,10 +65,26 @@ class Game {
   dealFlop() {
     // Burn one card, reveal flop cards
     this.discardPile.push(this.deck.drawCard());
-    this.communityCards.push(this.deck.drawCard());
-    this.communityCards.push(this.deck.drawCard());
-    this.communityCards.push(this.deck.drawCard());
+    discardElement.classList.remove("card-outline");
 
+    for (let i = 0; i < 3; i++) {
+      this.communityCards.push(this.deck.drawCard());
+    }
+
+    this.communityCards.forEach((card, i) => {
+      const cardElement = document.getElementById(
+        `community-card-flop${i + 1}`
+      );
+      cardElement.classList.remove("card-outline");
+
+      if ((card.suit == "heart") | (card.suit == "diamond")) {
+        cardElement.classList.add("card-red");
+      }
+      cardElement.textContent = card.value + suitSymbols[card.suit];
+    });
+
+    deckElement.textContent = "Deck (" + this.deck.cards.length + ")";
+    discardElement.textContent = "Discard (" + this.discardPile.length + ")";
     console.log("dealFlop deck:", this.deck);
     console.log("dealFlop players:", this.players);
     console.log("dealFlop community cards:", this.communityCards);
@@ -71,8 +94,19 @@ class Game {
   dealTurn() {
     // Burn one card, reveal turn card
     this.discardPile.push(this.deck.drawCard());
-    this.communityCards.push(this.deck.drawCard());
+    const turnCard = this.deck.drawCard();
+    this.communityCards.push(turnCard);
 
+    const cardElement = document.getElementById("community-card-turn");
+    cardElement.classList.remove("card-outline");
+
+    if ((turnCard.suit == "heart") | (turnCard.suit == "diamond")) {
+      cardElement.classList.add("card-red");
+    }
+    cardElement.textContent = turnCard.value + suitSymbols[turnCard.suit];
+
+    deckElement.textContent = "Deck (" + this.deck.cards.length + ")";
+    discardElement.textContent = "Discard (" + this.discardPile.length + ")";
     console.log("dealTurn deck:", this.deck);
     console.log("dealTurn players:", this.players);
     console.log("dealTurn community cards:", this.communityCards);
@@ -82,12 +116,58 @@ class Game {
   dealRiver() {
     // Burn one card, reveal river card
     this.discardPile.push(this.deck.drawCard());
-    this.communityCards.push(this.deck.drawCard());
+    const riverCard = this.deck.drawCard();
+    this.communityCards.push(riverCard);
 
+    const cardElement = document.getElementById("community-card-river");
+    cardElement.classList.remove("card-outline");
+
+    if ((riverCard.suit == "heart") | (riverCard.suit == "diamond")) {
+      cardElement.classList.add("card-red");
+    }
+    cardElement.textContent = riverCard.value + suitSymbols[riverCard.suit];
+
+    deckElement.textContent = "Deck (" + this.deck.cards.length + ")";
+    discardElement.textContent = "Discard (" + this.discardPile.length + ")";
     console.log("dealRiver deck:", this.deck);
     console.log("dealRiver players:", this.players);
     console.log("dealRiver community cards:", this.communityCards);
     console.log("dealRiver discard pile:", this.discardPile);
+  }
+
+  resetGame() {
+    // Clear players' hands
+    this.players.forEach((player) => {
+      player.hand = [];
+    });
+
+    // Clear community cards and discard pile
+    this.communityCards = [];
+    this.discardPile = [];
+
+    // New deck
+    this.deck = new Deck();
+
+    // Reset the UI
+    const cards = document.querySelectorAll(".card");
+
+    // Iterate over each card element
+    cards.forEach((card) => {
+      card.classList.add("card-outline");
+      card.classList.remove("card-red");
+      card.classList.remove("card-hidden");
+
+      if (card.id !== "deck" && card.id !== "discard") {
+        card.textContent = "";
+      }
+    });
+
+    deckElement.textContent = "Deck";
+    discardElement.textContent = "Discard";
+    console.log("reset deck:", this.deck);
+    console.log("reset players:", this.players);
+    console.log("reset community cards:", this.communityCards);
+    console.log("reset discard pile:", this.discardPile);
   }
 }
 
@@ -98,6 +178,7 @@ const dealPlayerCardsBtn = document.getElementById("dealPlayerCardsBtn");
 const dealFlopBtn = document.getElementById("dealFlopBtn");
 const dealTurnBtn = document.getElementById("dealTurnBtn");
 const dealRiverBtn = document.getElementById("dealRiverBtn");
+const resetGameBtn = document.getElementById("resetGameBtn");
 
 // Attach event listeners
 startGameBtn.addEventListener("click", startGame);
@@ -105,6 +186,7 @@ dealPlayerCardsBtn.addEventListener("click", dealPlayerCards);
 dealFlopBtn.addEventListener("click", dealFlop);
 dealTurnBtn.addEventListener("click", dealTurn);
 dealRiverBtn.addEventListener("click", dealRiver);
+resetGameBtn.addEventListener("click", resetGame);
 
 function startGame() {
   game.startGame();
@@ -126,9 +208,6 @@ function dealRiver() {
   game.dealRiver();
 }
 
-// Play a game
-// game.startGame();
-// game.dealPlayerCards();
-// game.dealFlop();
-// game.dealTurn();
-// game.dealRiver();
+function resetGame() {
+  game.resetGame();
+}
