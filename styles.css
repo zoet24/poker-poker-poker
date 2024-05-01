@@ -22,24 +22,34 @@
   font-size: 14px; /* Adjust font size as needed */
 }
 
-.card-space {
-  position: absolute;
-  width: 40px; /* Width of card space */
-  height: 60px; /* Height of card space */
-  background-color: #fff; /* Default card space background color */
-  border: 1px dashed #000; /* Default card space border */
-}
-
 .card {
-  position: absolute;
-  top: -1px;
-  left: -1px;
   width: 40px; /* Width of card space */
   height: 60px; /* Height of card space */
   background-color: #fff; /* Default card space background color */
   border: 1px solid #000;
-  text-align: center;
-  line-height: 90px;
   font-weight: bold;
-  font-size: 20px;
+  margin: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-outline {
+  border-style: dashed;
+}
+
+.cards-player {
+  display: flex;
+  position: absolute;
+  bottom: 55px;
+}
+
+.cards-community {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
 }
