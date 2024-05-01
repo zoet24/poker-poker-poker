@@ -18,10 +18,6 @@
   align-items: center;
 }
 
-.player-circle {
-  font-size: 14px; /* Adjust font size as needed */
-}
-
 .card {
   width: 40px; /* Width of card space */
   height: 60px; /* Height of card space */
@@ -42,6 +38,10 @@
   color: #f00;
 }
 
+.card-hidden {
+  color: #fff;
+}
+
 .cards-player {
   display: flex;
   position: absolute;
@@ -56,4 +56,8 @@
   transform: translate(-50%, -50%);
   top: 50%;
   left: 50%;
+}
+
+.game-controls {
+  margin-top: 20px;
 }

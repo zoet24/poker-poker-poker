@@ -1,32 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Texas Hold 'Em</title>
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
   <div class="table" id="table">
     <div class="cards-community">
-        <div class="card" id="deck">
-            Deck
-        </div>
-        <div style="display: flex;">
-            <div class="card card-outline" id="community-card-flop1"></div>
-            <div class="card card-outline" id="community-card-flop2"></div>
-            <div class="card card-outline" id="community-card-flop3"></div>
-            <div class="card card-outline" id="community-card-turn"></div>
-            <div class="card card-outline" id="community-card-river"></div>
-        </div>
-        <div class="card card-outline" id="discard">
-            Discard
-        </div>
+      <div class="card" id="deck">
+        Deck
+      </div>
+      <div style="display: flex;">
+        <div class="card card-outline" id="community-card-flop1"></div>
+        <div class="card card-outline" id="community-card-flop2"></div>
+        <div class="card card-outline" id="community-card-flop3"></div>
+        <div class="card card-outline" id="community-card-turn"></div>
+        <div class="card card-outline" id="community-card-river"></div>
+      </div>
+      <div class="card card-outline" id="discard">
+        Discard
+      </div>
     </div>
   </div>
+  <div class="game-controls">
+    <button id="startGameBtn">Start Game</button>
+    <button id="dealPlayerCardsBtn">Deal Player Cards</button>
+    <button id="dealFlopBtn">Deal Flop</button>
+    <button id="dealTurnBtn">Deal Turn</button>
+    <button id="dealRiverBtn">Deal River</button>
+  </div>
+  
   <script src="js/cards.js" type="module"></script>
   <script src="js/users.js" type="module"></script>
   <script src="js/game.js" type="module"></script>
   <script src="js/init.js" type="module"></script>
 </body>
+
 </html>
