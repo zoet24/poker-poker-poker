@@ -6,6 +6,12 @@ class Card {
 }
 
 export class Deck {
+  removeCardsFromDeck(valueToRemove, suitToRemove) {
+    this.cards = this.cards.filter(
+      (card) => !(card.value === valueToRemove && card.suit === suitToRemove)
+    );
+  }
+
   constructor() {
     this.cards = [];
     this.initializeDeck();
@@ -34,6 +40,12 @@ export class Deck {
         this.cards.push(new Card(value, suit));
       }
     }
+
+    this.removeCardsFromDeck("9", "heart");
+    this.removeCardsFromDeck("10", "heart");
+    this.removeCardsFromDeck("11", "heart");
+    this.removeCardsFromDeck("12", "heart");
+    this.removeCardsFromDeck("13", "heart");
   }
 
   shuffleDeck() {

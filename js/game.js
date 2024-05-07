@@ -45,6 +45,8 @@ class Game {
     console.log("Initial players:", this.players);
     console.log("Initial community cards:", this.communityCards);
     console.log("Initial discard pile:", this.discardPile);
+
+    console.log(this.deck);
   }
 
   dealPlayerCards() {
@@ -87,9 +89,13 @@ class Game {
     this.discardPile.push(this.deck.drawCard());
     discardElement.classList.remove("card-outline");
 
-    for (let i = 0; i < 3; i++) {
-      this.communityCards.push(this.deck.drawCard());
-    }
+    // for (let i = 0; i < 3; i++) {
+    //   this.communityCards.push(this.deck.drawCard());
+    // }
+
+    this.communityCards.push({ value: "10", suit: "heart" });
+    this.communityCards.push({ value: "11", suit: "heart" });
+    this.communityCards.push({ value: "12", suit: "heart" });
 
     this.communityCards.forEach((card, i) => {
       const cardElement = document.getElementById(
@@ -117,7 +123,8 @@ class Game {
   dealTurn() {
     // Burn one card, reveal turn card
     this.discardPile.push(this.deck.drawCard());
-    const turnCard = this.deck.drawCard();
+    // const turnCard = this.deck.drawCard();
+    const turnCard = { value: "13", suit: "heart" };
     this.communityCards.push(turnCard);
 
     const cardElement = document.getElementById("community-card-turn");
@@ -141,7 +148,8 @@ class Game {
   dealRiver() {
     // Burn one card, reveal river card
     this.discardPile.push(this.deck.drawCard());
-    const riverCard = this.deck.drawCard();
+    // const riverCard = this.deck.drawCard();
+    const riverCard = { value: "9", suit: "heart" };
     this.communityCards.push(riverCard);
 
     const cardElement = document.getElementById("community-card-river");
@@ -169,6 +177,8 @@ class Game {
       results.push({ name: player.name, ...playerHandRank });
     });
 
+    console.log(results);
+
     results.sort((a, b) => b.rank - a.rank);
 
     // console.log(results);
@@ -190,7 +200,7 @@ class Game {
 
       // Player hand
       const playerHand = document.createElement("span");
-      playerHand.textContent = `Hand: ${result.cards}`;
+      playerHand.textContent = `${result.rankName}: ${result.cards}`;
 
       // Append name, rank, and hand to list item
       listItem.appendChild(playerName);
