@@ -14,4 +14,5 @@ const bron = new Player("Bron", [], true);
 const char = new Player("Char", [], true);
 const henry = new Player("Mushy Peas", [], true);
 
+// export const players = [zoe, mike];
 export const players = [zoe, mike, fran, bron, char, henry];

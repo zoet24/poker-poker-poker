@@ -1,5 +1,6 @@
 import { players } from "./players.js";
 import { Deck } from "./cards.js";
+import { getPlayerHandRank } from "./hands.js";
 
 const suitSymbols = {
   spade: "\u2660", // ♠
@@ -160,6 +161,49 @@ class Game {
     console.log("dealRiver players:", this.players);
     console.log("dealRiver community cards:", this.communityCards);
     console.log("dealRiver discard pile:", this.discardPile);
+
+    let results = [];
+
+    this.players.forEach((player) => {
+      const playerHandRank = getPlayerHandRank(player, this.communityCards);
+      results.push({ name: player.name, ...playerHandRank });
+    });
+
+    results.sort((a, b) => b.rank - a.rank);
+
+    // console.log(results);
+
+    const list = document.createElement("ul");
+
+    // Iterate through players
+    results.forEach((result) => {
+      // Create list item for each player
+      const listItem = document.createElement("li");
+
+      // Player name
+      const playerName = document.createElement("span");
+      playerName.textContent = `Player: ${result.name}`;
+
+      // Player rank
+      const playerRank = document.createElement("span");
+      playerRank.textContent = `Rank: ${result.rank}`;
+
+      // Player hand
+      const playerHand = document.createElement("span");
+      playerHand.textContent = `Hand: ${result.cards}`;
+
+      // Append name, rank, and hand to list item
+      listItem.appendChild(playerName);
+      listItem.appendChild(document.createElement("br")); // Line break for readability
+      listItem.appendChild(playerRank);
+      listItem.appendChild(document.createElement("br")); // Line break for readability
+      listItem.appendChild(playerHand);
+
+      // Append list item to list
+      list.appendChild(listItem);
+
+      document.getElementById("player-list-container").appendChild(list);
+    });
   }
 
   resetGame() {
