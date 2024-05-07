@@ -19,6 +19,22 @@ class Game {
     this.discardPile = [];
   }
 
+  getCardValue(card) {
+    let cardValue = card.value;
+
+    if (card.value == "11") {
+      cardValue = "J";
+    } else if (card.value == "12") {
+      cardValue = "Q";
+    } else if (card.value == "13") {
+      cardValue = "K";
+    } else if (card.value == "14") {
+      cardValue = "A";
+    }
+
+    return cardValue;
+  }
+
   startGame() {
     this.deck.shuffleDeck();
     deckElement.classList.remove("card-outline");
@@ -47,7 +63,10 @@ class Game {
         if ((card.suit == "heart") | (card.suit == "diamond")) {
           cardElement.classList.add("card-red");
         }
-        cardElement.textContent = card.value + suitSymbols[card.suit];
+
+        const cardValue = this.getCardValue(card);
+
+        cardElement.textContent = cardValue + suitSymbols[card.suit];
 
         if (!player.showCards) {
           cardElement.classList.add("card-hidden");
@@ -80,7 +99,10 @@ class Game {
       if ((card.suit == "heart") | (card.suit == "diamond")) {
         cardElement.classList.add("card-red");
       }
-      cardElement.textContent = card.value + suitSymbols[card.suit];
+
+      const cardValue = this.getCardValue(card);
+
+      cardElement.textContent = cardValue + suitSymbols[card.suit];
     });
 
     deckElement.textContent = "Deck (" + this.deck.cards.length + ")";
@@ -103,7 +125,9 @@ class Game {
     if ((turnCard.suit == "heart") | (turnCard.suit == "diamond")) {
       cardElement.classList.add("card-red");
     }
-    cardElement.textContent = turnCard.value + suitSymbols[turnCard.suit];
+    const cardValue = this.getCardValue(turnCard);
+
+    cardElement.textContent = cardValue + suitSymbols[turnCard.suit];
 
     deckElement.textContent = "Deck (" + this.deck.cards.length + ")";
     discardElement.textContent = "Discard (" + this.discardPile.length + ")";
@@ -125,7 +149,10 @@ class Game {
     if ((riverCard.suit == "heart") | (riverCard.suit == "diamond")) {
       cardElement.classList.add("card-red");
     }
-    cardElement.textContent = riverCard.value + suitSymbols[riverCard.suit];
+
+    const cardValue = this.getCardValue(riverCard);
+
+    cardElement.textContent = cardValue + suitSymbols[riverCard.suit];
 
     deckElement.textContent = "Deck (" + this.deck.cards.length + ")";
     discardElement.textContent = "Discard (" + this.discardPile.length + ")";

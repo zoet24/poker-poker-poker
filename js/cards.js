@@ -23,10 +23,10 @@ export class Deck {
       "8",
       "9",
       "10",
-      "J",
-      "Q",
-      "K",
-      "A",
+      "11", // J
+      "12", // Q
+      "13", // K
+      "14", // A
     ];
 
     for (const suit of suits) {
