@@ -40,6 +40,29 @@ const isRoyalFlush = (cards) => {
   );
 };
 
+const isStraightFlush = (cards) => {
+  const suits = new Set(cards.map((card) => card.suit));
+  const values = cards
+    .map((card) => parseInt(card.value))
+    .sort((a, b) => a - b);
+
+  // Check for five consecutive values and same suit
+  if (suits.size !== 1) return false;
+
+  for (let i = 0; i < values.length - 4; i++) {
+    if (
+      values[i + 4] - values[i + 3] === 1 &&
+      values[i + 3] - values[i + 2] === 1 &&
+      values[i + 2] - values[i + 1] === 1 &&
+      values[i + 1] - values[i] === 1
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
 export function getPlayerHandRank(player, communityCards) {
   // Combine player's cards and cards on the table
   const allCards = [...player.hand, ...communityCards];
@@ -98,7 +121,6 @@ export function getPlayerHandRank(player, communityCards) {
     rank,
     rankCards = [];
 
-  // Checks for ROYAL FLUSH: rank: 900
   for (let i = 0; i < allCards.length - 4; i++) {
     for (let j = i + 1; j < allCards.length - 3; j++) {
       for (let k = j + 1; k < allCards.length - 2; k++) {
@@ -111,68 +133,77 @@ export function getPlayerHandRank(player, communityCards) {
               allCards[l],
               allCards[m],
             ];
+
             if (isRoyalFlush(hand)) {
               rankName = "Royal Flush";
               rank = 900;
               rankCards = hand;
               break;
+            } else if (isStraightFlush(hand)) {
+              rankName = "Straight Flush";
+              rank = 800;
+              rankCards = hand;
             }
           }
+          if (rankName) break;
         }
+        if (rankName) break;
       }
+      if (rankName) break;
     }
+    if (rankName) break;
   }
 
-  if (rankName === "Royal Flush") {
-    console.log("Hand is a Royal Flush");
+  if (rankName) {
+    console.log(`Hand is a ${rankName}`);
   } else {
-    console.log("Hand is not a Royal Flush");
+    console.log("Hand is not a Royal Flush or Straight Flush");
   }
 
   // Checks for STRAIGHT FLUSH, rank: [800, 900)
-  // else {
-  //   for (const suit of suits) {
-  //     const suitCards = allCards.filter((x) => x.suit === suit);
-  //     if (suitCards.length >= 5) {
-  //       // There's no way for duplicates, since every card in the same suit is unique
-  //       let counter = 1;
-  //       let lastValue = -1;
-  //       const straightFlushCards = [];
-  //       for (let i = 0; i < suitCards.length - 1; i++) {
-  //         if (
-  //           parseInt(suitCards[i].value) + 1 ===
-  //           parseInt(suitCards[i + 1].value)
-  //         ) {
-  //           counter++;
-  //           lastValue = parseInt(suitCards[i + 1].value);
-  //           straightFlushCards.push(suitCards[i]);
-  //         } else {
-  //           counter = 1;
-  //           straightFlushCards.length = 0;
-  //         }
-  //       }
-
-  //       if (counter >= 5) {
-  //         rankName = "Straight Flush";
-  //         rank = 800 + (lastValue / 14) * 99;
-  //         rankCards.push(...straightFlushCards);
-  //       }
-  //       // Will cover situations like this: 2,3,4,5,A,A,A
-  //       // In that case we should check the 3 last cards if they are Ace and have the same suit has the 4th card.
-
-  //       // Edge case where we have: 2,3,4,5 and then somewhere 14 ( must be last card )
-  //       // In that case we'll declare as Straight Flush as well with highest card 5.
-  //       else if (
-  //         counter === 4 &&
-  //         lastValue === 5 &&
-  //         suitCards[suitCards.length - 1].value === "14"
+  // for (const suit of suits) {
+  //   const suitCards = allCards.filter((x) => x.suit === suit);
+  //   if (suitCards.length >= 5) {
+  //     // There's no way for duplicates, since every card in the same suit is unique
+  //     let counter = 1;
+  //     let lastValue = -1;
+  //     const straightFlushCards = [];
+  //     for (let i = 0; i < suitCards.length - 1; i++) {
+  //       if (
+  //         parseInt(suitCards[i].value) + 1 ===
+  //         parseInt(suitCards[i + 1].value)
   //       ) {
-  //         rankName = "Straight Flush";
-  //         rank = 835.3571; // The result of: 800 + 5 / 14 * 99
-  //         rankCards.push(...straightFlushCards);
+  //         counter++;
+  //         lastValue = parseInt(suitCards[i + 1].value);
+  //         straightFlushCards.push(suitCards[i]);
+  //       } else {
+  //         counter = 1;
+  //         straightFlushCards.length = 0;
   //       }
   //     }
+
+  //     if (counter >= 5) {
+  //       rankName = "Straight Flush";
+  //       rank = 800 + (lastValue / 14) * 99;
+  //       rankCards.push(...straightFlushCards);
+  //     }
+  //     // Will cover situations like this: 2,3,4,5,A,A,A
+  //     // In that case we should check the 3 last cards if they are Ace and have the same suit has the 4th card.
+
+  //     // Edge case where we have: 2,3,4,5 and then somewhere 14 ( must be last card )
+  //     // In that case we'll declare as Straight Flush as well with highest card 5.
+  //     else if (
+  //       counter === 4 &&
+  //       lastValue === 5 &&
+  //       suitCards[suitCards.length - 1].value === "14"
+  //     ) {
+  //       rankName = "Straight Flush";
+  //       rank = 835.3571; // The result of: 800 + 5 / 14 * 99
+  //       rankCards.push(...straightFlushCards);
+  //     }
   //   }
+  // }
+
   //   if (rankName == null) {
   //     // For the other cases we'll sort the duplicate cards in descending order by the amount
   //     duplicates.sort((x, y) => parseInt(y[0]) - parseInt(x[0]));

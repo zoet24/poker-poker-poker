@@ -19,11 +19,11 @@ class Game {
     this.communityCards = [];
     this.discardPile = [];
     this.communityCardSet = [
-      new Card("9", "heart"),
-      new Card("11", "heart"),
-      new Card("12", "heart"),
-      new Card("13", "heart"),
-      new Card("14", "heart"),
+      new Card("2", "heart"),
+      new Card("3", "heart"),
+      new Card("4", "heart"),
+      new Card("5", "heart"),
+      new Card("6", "heart"),
     ];
 
     this.initialiseCommunityCards();
@@ -215,7 +215,9 @@ class Game {
 
       // Player hand
       const playerHand = document.createElement("span");
-      playerHand.textContent = `${result.rankName}: ${result.cards}`;
+      playerHand.textContent = `${result.rankName}: ${result.cards
+        .map((card) => `${card.value}${suitSymbols[card.suit]}`)
+        .join(", ")}`;
 
       // Append name, rank, and hand to list item
       listItem.appendChild(playerName);
