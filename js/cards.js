@@ -6,18 +6,12 @@ export class Card {
 }
 
 export class Deck {
-  removeCardsFromDeck(valueToRemove, suitToRemove) {
-    this.cards = this.cards.filter(
-      (card) => !(card.value === valueToRemove && card.suit === suitToRemove)
-    );
-  }
-
   constructor() {
     this.cards = [];
-    this.initializeDeck();
+    this.initialiseDeck();
   }
 
-  initializeDeck() {
+  initialiseDeck() {
     const suits = ["spade", "heart", "diamond", "club"];
     const values = [
       "2",
@@ -40,12 +34,6 @@ export class Deck {
         this.cards.push(new Card(value, suit));
       }
     }
-
-    this.removeCardsFromDeck("14", "heart");
-    this.removeCardsFromDeck("14", "diamond");
-    this.removeCardsFromDeck("14", "club");
-    this.removeCardsFromDeck("14", "spade");
-    this.removeCardsFromDeck("13", "heart");
   }
 
   shuffleDeck() {
@@ -61,5 +49,11 @@ export class Deck {
       throw new Error("Deck is empty");
     }
     return this.cards.pop(); // Draw the top card from the deck
+  }
+
+  removeCardsFromDeck(valueToRemove, suitToRemove) {
+    this.cards = this.cards.filter(
+      (card) => !(card.value === valueToRemove && card.suit === suitToRemove)
+    );
   }
 }

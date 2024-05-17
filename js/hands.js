@@ -39,7 +39,7 @@ export function getPlayerHandRank(player, communityCards) {
   // Sort the cards by their values
   allCards.sort((x, y) => parseInt(x.value) - parseInt(y.value));
 
-  // Initialize variables for hand evaluation
+  // initialise variables for hand evaluation
   let maxCardValue = -1;
   let dupCount = 1,
     seqCount = 1,

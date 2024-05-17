@@ -18,6 +18,22 @@ class Game {
     this.players = players;
     this.communityCards = [];
     this.discardPile = [];
+    this.communityCardSet = [
+      new Card("2", "heart"),
+      new Card("11", "spade"),
+      new Card("12", "club"),
+      new Card("13", "diamond"),
+      new Card("4", "heart"),
+    ];
+
+    this.initialiseCommunityCards();
+  }
+
+  initialiseCommunityCards() {
+    // Remove community cards from the deck
+    this.communityCardSet.forEach((card) => {
+      this.deck.removeCardsFromDeck(card.value, card.suit);
+    });
   }
 
   getCardValue(card) {
@@ -88,14 +104,11 @@ class Game {
     // Burn one card, reveal flop cards
     this.discardPile.push(this.deck.drawCard());
     discardElement.classList.remove("card-outline");
-
     // for (let i = 0; i < 3; i++) {
     //   this.communityCards.push(this.deck.drawCard());
     // }
 
-    this.communityCards.push(new Card("14", "heart"));
-    this.communityCards.push(new Card("14", "diamond"));
-    this.communityCards.push(new Card("14", "club"));
+    this.communityCards.push(...this.communityCardSet.slice(0, 3));
 
     this.communityCards.forEach((card, i) => {
       const cardElement = document.getElementById(
@@ -124,8 +137,9 @@ class Game {
     // Burn one card, reveal turn card
     this.discardPile.push(this.deck.drawCard());
     // const turnCard = this.deck.drawCard();
-    const turnCard = new Card("14", "spade");
+    // this.communityCards.push(turnCard);
 
+    const turnCard = this.communityCardSet[3];
     this.communityCards.push(turnCard);
 
     const cardElement = document.getElementById("community-card-turn");
@@ -150,7 +164,9 @@ class Game {
     // Burn one card, reveal river card
     this.discardPile.push(this.deck.drawCard());
     // const riverCard = this.deck.drawCard();
-    const riverCard = new Card("13", "heart");
+    // this.communityCards.push(riverCard);
+
+    const riverCard = this.communityCardSet[4];
     this.communityCards.push(riverCard);
 
     const cardElement = document.getElementById("community-card-river");
