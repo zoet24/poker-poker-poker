@@ -28,6 +28,18 @@ function evaluateRankByHighestCards(
 
 const suits = ["spade", "heart", "diamond", "club"];
 
+const isRoyalFlush = (cards) => {
+  const royalValues = ["10", "11", "12", "13", "14"];
+  const suits = new Set(cards.map((card) => card.suit));
+  const values = cards
+    .map((card) => card.value)
+    .sort((a, b) => parseInt(a) - parseInt(b));
+
+  return (
+    royalValues.every((value) => values.includes(value)) && suits.size === 1 // All cards must be of the same suit
+  );
+};
+
 export function getPlayerHandRank(player, communityCards) {
   // Combine player's cards and cards on the table
   const allCards = [...player.hand, ...communityCards];
@@ -87,151 +99,164 @@ export function getPlayerHandRank(player, communityCards) {
     rankCards = [];
 
   // Checks for ROYAL FLUSH: rank: 900
-  if (
-    allCards[6].value === "14" &&
-    allCards[5].value === "13" &&
-    allCards[4].value === "12" &&
-    allCards[3].value === "11" &&
-    allCards[2].value === "10" &&
-    allCards[6].suit === allCards[5].suit &&
-    allCards[6].suit === allCards[4].suit &&
-    allCards[6].suit === allCards[3].suit &&
-    allCards[6].suit === allCards[2].suit
-  ) {
-    rankName = "Royal Flush";
-    rank = 900;
+  for (let i = 0; i < allCards.length - 4; i++) {
+    for (let j = i + 1; j < allCards.length - 3; j++) {
+      for (let k = j + 1; k < allCards.length - 2; k++) {
+        for (let l = k + 1; l < allCards.length - 1; l++) {
+          for (let m = l + 1; m < allCards.length; m++) {
+            const hand = [
+              allCards[i],
+              allCards[j],
+              allCards[k],
+              allCards[l],
+              allCards[m],
+            ];
+            if (isRoyalFlush(hand)) {
+              rankName = "Royal Flush";
+              rank = 900;
+              rankCards = hand;
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
 
-    rankCards.push(...allCards.slice(2));
+  if (rankName === "Royal Flush") {
+    console.log("Hand is a Royal Flush");
+  } else {
+    console.log("Hand is not a Royal Flush");
   }
 
   // Checks for STRAIGHT FLUSH, rank: [800, 900)
-  else {
-    for (const suit of suits) {
-      const suitCards = allCards.filter((x) => x.suit === suit);
-      if (suitCards.length >= 5) {
-        // There's no way for duplicates, since every card in the same suit is unique
-        let counter = 1;
-        let lastValue = -1;
-        const straightFlushCards = [];
-        for (let i = 0; i < suitCards.length - 1; i++) {
-          if (
-            parseInt(suitCards[i].value) + 1 ===
-            parseInt(suitCards[i + 1].value)
-          ) {
-            counter++;
-            lastValue = parseInt(suitCards[i + 1].value);
-            straightFlushCards.push(suitCards[i]);
-          } else {
-            counter = 1;
-            straightFlushCards.length = 0;
-          }
-        }
+  // else {
+  //   for (const suit of suits) {
+  //     const suitCards = allCards.filter((x) => x.suit === suit);
+  //     if (suitCards.length >= 5) {
+  //       // There's no way for duplicates, since every card in the same suit is unique
+  //       let counter = 1;
+  //       let lastValue = -1;
+  //       const straightFlushCards = [];
+  //       for (let i = 0; i < suitCards.length - 1; i++) {
+  //         if (
+  //           parseInt(suitCards[i].value) + 1 ===
+  //           parseInt(suitCards[i + 1].value)
+  //         ) {
+  //           counter++;
+  //           lastValue = parseInt(suitCards[i + 1].value);
+  //           straightFlushCards.push(suitCards[i]);
+  //         } else {
+  //           counter = 1;
+  //           straightFlushCards.length = 0;
+  //         }
+  //       }
 
-        if (counter >= 5) {
-          rankName = "Straight Flush";
-          rank = 800 + (lastValue / 14) * 99;
-          rankCards.push(...straightFlushCards);
-        }
-        // Will cover situations like this: 2,3,4,5,A,A,A
-        // In that case we should check the 3 last cards if they are Ace and have the same suit has the 4th card.
+  //       if (counter >= 5) {
+  //         rankName = "Straight Flush";
+  //         rank = 800 + (lastValue / 14) * 99;
+  //         rankCards.push(...straightFlushCards);
+  //       }
+  //       // Will cover situations like this: 2,3,4,5,A,A,A
+  //       // In that case we should check the 3 last cards if they are Ace and have the same suit has the 4th card.
 
-        // Edge case where we have: 2,3,4,5 and then somewhere 14 ( must be last card )
-        // In that case we'll declare as Straight Flush as well with highest card 5.
-        else if (
-          counter === 4 &&
-          lastValue === 5 &&
-          suitCards[suitCards.length - 1].value === "14"
-        ) {
-          rankName = "Straight Flush";
-          rank = 835.3571; // The result of: 800 + 5 / 14 * 99
-          rankCards.push(...straightFlushCards);
-        }
-      }
-    }
-    if (rankName == null) {
-      // For the other cases we'll sort the duplicate cards in descending order by the amount
-      duplicates.sort((x, y) => parseInt(y[0]) - parseInt(x[0]));
+  //       // Edge case where we have: 2,3,4,5 and then somewhere 14 ( must be last card )
+  //       // In that case we'll declare as Straight Flush as well with highest card 5.
+  //       else if (
+  //         counter === 4 &&
+  //         lastValue === 5 &&
+  //         suitCards[suitCards.length - 1].value === "14"
+  //       ) {
+  //         rankName = "Straight Flush";
+  //         rank = 835.3571; // The result of: 800 + 5 / 14 * 99
+  //         rankCards.push(...straightFlushCards);
+  //       }
+  //     }
+  //   }
+  //   if (rankName == null) {
+  //     // For the other cases we'll sort the duplicate cards in descending order by the amount
+  //     duplicates.sort((x, y) => parseInt(y[0]) - parseInt(x[0]));
 
-      // Checks for FOUR OF A KIND, rank: [700, 800)
-      if (duplicates.length > 0 && duplicates[0][0] == 4) {
-        rankName = "Four of a kind";
-        rank =
-          700 +
-          (duplicates[0][1] / 14) * 50 +
-          evaluateRankByHighestCards(
-            allCards,
-            parseInt(duplicates[0][1]),
-            -1,
-            1
-          );
+  //     // Checks for FOUR OF A KIND, rank: [700, 800)
+  //     if (duplicates.length > 0 && duplicates[0][0] == 4) {
+  //       rankName = "Four of a kind";
+  //       rank =
+  //         700 +
+  //         (duplicates[0][1] / 14) * 50 +
+  //         evaluateRankByHighestCards(
+  //           allCards,
+  //           parseInt(duplicates[0][1]),
+  //           -1,
+  //           1
+  //         );
 
-        suits.forEach((suit) =>
-          rankCards.push([duplicates[0][1].toString(), suit])
-        );
-      }
-    }
-    // Checks for a FULL HOUSE, rank: [600, 700)
-    // Edge case: there are 2 pairs of 2 and one Pair of 3, for example: 33322AA
-    else if (
-      duplicates.length > 2 &&
-      duplicates[0][0] == 3 &&
-      duplicates[1][0] == 2 &&
-      duplicates[2][0] == 2
-    ) {
-      // In that edge case, we'll check from the two pairs what is greater.
-      rankName = "Full House";
-      let maxTmpValue = Math.max(duplicates[1][1], duplicates[2][1]);
-      rank = 600 + parseInt(duplicates[0][1]) + maxTmpValue / 14;
+  //       suits.forEach((suit) =>
+  //         rankCards.push([duplicates[0][1].toString(), suit])
+  //       );
+  //     }
+  //   }
+  //   // Checks for a FULL HOUSE, rank: [600, 700)
+  //   // Edge case: there are 2 pairs of 2 and one Pair of 3, for example: 33322AA
+  //   else if (
+  //     duplicates.length > 2 &&
+  //     duplicates[0][0] == 3 &&
+  //     duplicates[1][0] == 2 &&
+  //     duplicates[2][0] == 2
+  //   ) {
+  //     // In that edge case, we'll check from the two pairs what is greater.
+  //     rankName = "Full House";
+  //     let maxTmpValue = Math.max(duplicates[1][1], duplicates[2][1]);
+  //     rank = 600 + parseInt(duplicates[0][1]) + maxTmpValue / 14;
 
-      for (let i = 0; i < 3; i++)
-        rankCards.push([duplicates[0][1].toString(), null]);
+  //     for (let i = 0; i < 3; i++)
+  //       rankCards.push([duplicates[0][1].toString(), null]);
 
-      for (let i = 0; i < 2; i++)
-        rankCards.push([maxTmpValue.toString(), null]);
-    } else if (
-      duplicates.length > 1 &&
-      duplicates[0][0] == 3 &&
-      duplicates[1][0] == 2
-    ) {
-      rankName = "Full House";
-      rank = 600 + parseInt(duplicates[0][1]) + duplicates[1][1] / 14;
+  //     for (let i = 0; i < 2; i++)
+  //       rankCards.push([maxTmpValue.toString(), null]);
+  //   } else if (
+  //     duplicates.length > 1 &&
+  //     duplicates[0][0] == 3 &&
+  //     duplicates[1][0] == 2
+  //   ) {
+  //     rankName = "Full House";
+  //     rank = 600 + parseInt(duplicates[0][1]) + duplicates[1][1] / 14;
 
-      for (let i = 0; i < 3; i++)
-        rankCards.push([duplicates[0][1].toString(), null]);
+  //     for (let i = 0; i < 3; i++)
+  //       rankCards.push([duplicates[0][1].toString(), null]);
 
-      for (let i = 0; i < 2; i++)
-        rankCards.push([duplicates[1][1].toString(), null]);
-    }
+  //     for (let i = 0; i < 2; i++)
+  //       rankCards.push([duplicates[1][1].toString(), null]);
+  //   }
 
-    // Edge case where there are 2 pairs of Three of a kind
-    // For example if the case is 333 222 then we'll check what is better: 333 22 or 222 33.
-    else if (
-      duplicates.length > 1 &&
-      duplicates[0][0] == 3 &&
-      duplicates[1][0] == 3
-    ) {
-      rankName = "Full House";
+  //   // Edge case where there are 2 pairs of Three of a kind
+  //   // For example if the case is 333 222 then we'll check what is better: 333 22 or 222 33.
+  //   else if (
+  //     duplicates.length > 1 &&
+  //     duplicates[0][0] == 3 &&
+  //     duplicates[1][0] == 3
+  //   ) {
+  //     rankName = "Full House";
 
-      let rank1 = 600 + parseInt(duplicates[0][1]) + duplicates[1][1] / 14;
-      let rank2 = 600 + parseInt(duplicates[1][1]) + duplicates[0][1] / 14;
+  //     let rank1 = 600 + parseInt(duplicates[0][1]) + duplicates[1][1] / 14;
+  //     let rank2 = 600 + parseInt(duplicates[1][1]) + duplicates[0][1] / 14;
 
-      if (rank1 > rank2) {
-        rank = rank1;
-        for (let i = 0; i < 3; i++)
-          rankCards.push([duplicates[0][1].toString(), null]);
+  //     if (rank1 > rank2) {
+  //       rank = rank1;
+  //       for (let i = 0; i < 3; i++)
+  //         rankCards.push([duplicates[0][1].toString(), null]);
 
-        for (let i = 0; i < 2; i++)
-          rankCards.push([duplicates[1][1].toString(), null]);
-      } else {
-        rank = rank2;
-        for (let i = 0; i < 3; i++)
-          rankCards.push([duplicates[1][1].toString(), null]);
+  //       for (let i = 0; i < 2; i++)
+  //         rankCards.push([duplicates[1][1].toString(), null]);
+  //     } else {
+  //       rank = rank2;
+  //       for (let i = 0; i < 3; i++)
+  //         rankCards.push([duplicates[1][1].toString(), null]);
 
-        for (let i = 0; i < 2; i++)
-          rankCards.push([duplicates[0][1].toString(), null]);
-      }
-    }
-  }
+  //       for (let i = 0; i < 2; i++)
+  //         rankCards.push([duplicates[0][1].toString(), null]);
+  //     }
+  //   }
+  // }
 
   //   // Checks for Straight, rank: [400, 500)
   //   if (seqCountMax >= 5) {
