@@ -1,5 +1,5 @@
 import { players } from "./players.js";
-import { Deck } from "./cards.js";
+import { Card, Deck } from "./cards.js";
 import { getPlayerHandRank } from "./hands.js";
 
 const suitSymbols = {
@@ -93,9 +93,9 @@ class Game {
     //   this.communityCards.push(this.deck.drawCard());
     // }
 
-    this.communityCards.push({ value: "10", suit: "heart" });
-    this.communityCards.push({ value: "11", suit: "heart" });
-    this.communityCards.push({ value: "12", suit: "heart" });
+    this.communityCards.push(new Card("14", "heart"));
+    this.communityCards.push(new Card("14", "diamond"));
+    this.communityCards.push(new Card("14", "club"));
 
     this.communityCards.forEach((card, i) => {
       const cardElement = document.getElementById(
@@ -124,7 +124,8 @@ class Game {
     // Burn one card, reveal turn card
     this.discardPile.push(this.deck.drawCard());
     // const turnCard = this.deck.drawCard();
-    const turnCard = { value: "13", suit: "heart" };
+    const turnCard = new Card("14", "spade");
+
     this.communityCards.push(turnCard);
 
     const cardElement = document.getElementById("community-card-turn");
@@ -149,7 +150,7 @@ class Game {
     // Burn one card, reveal river card
     this.discardPile.push(this.deck.drawCard());
     // const riverCard = this.deck.drawCard();
-    const riverCard = { value: "9", suit: "heart" };
+    const riverCard = new Card("13", "heart");
     this.communityCards.push(riverCard);
 
     const cardElement = document.getElementById("community-card-river");
@@ -177,11 +178,9 @@ class Game {
       results.push({ name: player.name, ...playerHandRank });
     });
 
-    console.log(results);
-
     results.sort((a, b) => b.rank - a.rank);
 
-    // console.log(results);
+    console.log("Results", results);
 
     const list = document.createElement("ul");
 

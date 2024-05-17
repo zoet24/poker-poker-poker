@@ -1,4 +1,4 @@
-class Card {
+export class Card {
   constructor(value, suit) {
     this.value = value;
     this.suit = suit;
@@ -41,10 +41,10 @@ export class Deck {
       }
     }
 
-    this.removeCardsFromDeck("9", "heart");
-    this.removeCardsFromDeck("10", "heart");
-    this.removeCardsFromDeck("11", "heart");
-    this.removeCardsFromDeck("12", "heart");
+    this.removeCardsFromDeck("14", "heart");
+    this.removeCardsFromDeck("14", "diamond");
+    this.removeCardsFromDeck("14", "club");
+    this.removeCardsFromDeck("14", "spade");
     this.removeCardsFromDeck("13", "heart");
   }
 
