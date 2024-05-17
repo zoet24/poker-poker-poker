@@ -19,11 +19,11 @@ class Game {
     this.communityCards = [];
     this.discardPile = [];
     this.communityCardSet = [
+      new Card("14", "heart"),
       new Card("2", "heart"),
       new Card("3", "heart"),
       new Card("4", "heart"),
       new Card("5", "heart"),
-      new Card("6", "heart"),
     ];
 
     this.initialiseCommunityCards();

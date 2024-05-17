@@ -40,27 +40,69 @@ const isRoyalFlush = (cards) => {
   );
 };
 
-const isStraightFlush = (cards) => {
-  const suits = new Set(cards.map((card) => card.suit));
-  const values = cards
-    .map((card) => parseInt(card.value))
-    .sort((a, b) => a - b);
+const getStraightFlushRank = (cards) => {
+  const suits = ["spade", "heart", "diamond", "club"];
+  let bestStraightFlush = null;
 
-  // Check for five consecutive values and same suit
-  if (suits.size !== 1) return false;
+  for (const suit of suits) {
+    const suitCards = cards.filter((card) => card.suit === suit);
+    if (suitCards.length >= 5) {
+      suitCards.sort((a, b) => parseInt(a.value) - parseInt(b.value));
 
-  for (let i = 0; i < values.length - 4; i++) {
-    if (
-      values[i + 4] - values[i + 3] === 1 &&
-      values[i + 3] - values[i + 2] === 1 &&
-      values[i + 2] - values[i + 1] === 1 &&
-      values[i + 1] - values[i] === 1
-    ) {
-      return true;
+      let counter = 1;
+      let straightFlushCards = [suitCards[0]];
+
+      for (let i = 0; i < suitCards.length - 1; i++) {
+        if (
+          parseInt(suitCards[i].value) + 1 ===
+          parseInt(suitCards[i + 1].value)
+        ) {
+          counter++;
+          straightFlushCards.push(suitCards[i + 1]);
+          if (counter >= 5) {
+            const currentRank =
+              800 + (parseInt(suitCards[i + 1].value) / 14) * 99;
+            if (!bestStraightFlush || currentRank > bestStraightFlush.rank) {
+              bestStraightFlush = {
+                rankName: "Straight Flush",
+                rank: currentRank,
+                cards: straightFlushCards.slice(-5), // Take the last 5 cards
+              };
+            }
+          }
+        } else {
+          counter = 1;
+          straightFlushCards = [suitCards[i + 1]];
+        }
+      }
+
+      // Special case for wheel straight flush (A-2-3-4-5)
+      if (suitCards.length >= 5) {
+        const values = suitCards.map((card) => parseInt(card.value));
+        if (
+          values.includes(14) &&
+          values.includes(2) &&
+          values.includes(3) &&
+          values.includes(4) &&
+          values.includes(5)
+        ) {
+          const lowStraight = suitCards.filter((card) =>
+            ["14", "2", "3", "4", "5"].includes(card.value)
+          );
+          const currentRank = 800 + (5 / 14) * 99;
+          if (!bestStraightFlush || currentRank > bestStraightFlush.rank) {
+            bestStraightFlush = {
+              rankName: "Straight Flush",
+              rank: currentRank,
+              cards: lowStraight,
+            };
+          }
+        }
+      }
     }
   }
 
-  return false;
+  return bestStraightFlush;
 };
 
 export function getPlayerHandRank(player, communityCards) {
@@ -73,48 +115,6 @@ export function getPlayerHandRank(player, communityCards) {
 
   // Sort the cards by their values
   allCards.sort((x, y) => parseInt(x.value) - parseInt(y.value));
-
-  // initialise variables for hand evaluation
-  let maxCardValue = -1;
-  let dupCount = 1,
-    seqCount = 1,
-    seqCountMax = 1;
-  let seqMaxValue = -1;
-  let duplicates = [];
-
-  // Iterate over the cards to evaluate hand
-  for (let i = 0; i < 6; i++) {
-    const currCardValue = parseInt(allCards[i].value);
-    const nextCardValue = parseInt(allCards[i + 1].value);
-
-    // Check for duplicates
-    if (currCardValue === nextCardValue) {
-      dupCount++;
-    } else if (dupCount > 1) {
-      duplicates.push([dupCount, currCardValue]);
-      dupCount = 1;
-    }
-
-    // Check for sequences
-    if (currCardValue + 1 === nextCardValue) {
-      seqCount++;
-    } else if (currCardValue !== nextCardValue) {
-      if (seqCount > seqCountMax) {
-        seqCountMax = seqCount;
-        seqMaxValue = currCardValue;
-      }
-      seqCount = 1;
-    }
-
-    // Update max card value
-    maxCardValue = nextCardValue;
-  }
-
-  // Check sequence count for last card
-  if (seqCount > seqCountMax) {
-    seqCountMax = seqCount;
-    seqMaxValue = maxCardValue;
-  }
 
   // Evaluate hand rank based on rules
   let rankName,
@@ -139,19 +139,22 @@ export function getPlayerHandRank(player, communityCards) {
               rank = 900;
               rankCards = hand;
               break;
-            } else if (isStraightFlush(hand)) {
-              rankName = "Straight Flush";
-              rank = 800;
-              rankCards = hand;
+            } else {
+              const straightFlush = getStraightFlushRank(hand);
+              if (straightFlush && (!rankName || straightFlush.rank > rank)) {
+                rankName = straightFlush.rankName;
+                rank = straightFlush.rank;
+                rankCards = straightFlush.cards;
+              }
             }
           }
-          if (rankName) break;
+          if (rankName === "Royal Flush") break;
         }
-        if (rankName) break;
+        if (rankName === "Royal Flush") break;
       }
-      if (rankName) break;
+      if (rankName === "Royal Flush") break;
     }
-    if (rankName) break;
+    if (rankName === "Royal Flush") break;
   }
 
   if (rankName) {
