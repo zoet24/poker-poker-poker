@@ -3,6 +3,45 @@ export class Card {
     this.value = value;
     this.suit = suit;
   }
+
+  static suits = ["spade", "heart", "diamond", "club"];
+
+  static suitSymbols = {
+    spade: "\u2660", // ♠
+    heart: "\u2665", // ♥
+    diamond: "\u2666", // ♦
+    club: "\u2663", // ♣
+  };
+
+  static suitColours = {
+    spade: "black",
+    heart: "red",
+    diamond: "red",
+    club: "black",
+  };
+
+  getSuitSymbol() {
+    return Card.suitSymbols[this.suit];
+  }
+
+  getSuitColour() {
+    return Card.suitColours[this.suit];
+  }
+
+  getDisplayValue() {
+    switch (this.value) {
+      case "11":
+        return "J";
+      case "12":
+        return "Q";
+      case "13":
+        return "K";
+      case "14":
+        return "A";
+      default:
+        return this.value;
+    }
+  }
 }
 
 export class Deck {
@@ -12,7 +51,6 @@ export class Deck {
   }
 
   initialiseDeck() {
-    const suits = ["spade", "heart", "diamond", "club"];
     const values = [
       "2",
       "3",
@@ -29,7 +67,7 @@ export class Deck {
       "14", // A
     ];
 
-    for (const suit of suits) {
+    for (const suit of Card.suits) {
       for (const value of values) {
         this.cards.push(new Card(value, suit));
       }

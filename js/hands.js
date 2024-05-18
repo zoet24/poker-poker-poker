@@ -1,3 +1,5 @@
+import { Card } from "./cards.js";
+
 // Royal flush: 900
 const isRoyalFlush = (cards) => {
   const royalValues = ["10", "11", "12", "13", "14"];
@@ -13,10 +15,9 @@ const isRoyalFlush = (cards) => {
 
 // Straight flush: 800 - 900
 const getStraightFlushRank = (cards) => {
-  const suits = ["spade", "heart", "diamond", "club"];
   let bestStraightFlush = null;
 
-  for (const suit of suits) {
+  for (const suit of Card.suits) {
     const suitCards = cards.filter((card) => card.suit === suit);
     if (suitCards.length >= 5) {
       suitCards.sort((a, b) => parseInt(a.value) - parseInt(b.value));

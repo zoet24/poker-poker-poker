@@ -1,13 +1,6 @@
 import { players } from "./players.js";
-import { Card, Deck } from "./cards.js";
+import { Deck } from "./cards.js";
 import { getPlayerHandRank } from "./hands.js";
-
-const suitSymbols = {
-  spade: "\u2660", // ♠
-  heart: "\u2665", // ♥
-  diamond: "\u2666", // ♦
-  club: "\u2663", // ♣
-};
 
 const deckElement = document.getElementById("deck");
 const discardElement = document.getElementById("discard");
@@ -29,28 +22,12 @@ class Game {
     // this.initialiseCommunityCards();
   }
 
-  initialiseCommunityCards() {
-    // Remove community cards from the deck
-    this.communityCardSet.forEach((card) => {
-      this.deck.removeCardsFromDeck(card.value, card.suit);
-    });
-  }
-
-  getCardValue(card) {
-    let cardValue = card.value;
-
-    if (card.value == "11") {
-      cardValue = "J";
-    } else if (card.value == "12") {
-      cardValue = "Q";
-    } else if (card.value == "13") {
-      cardValue = "K";
-    } else if (card.value == "14") {
-      cardValue = "A";
-    }
-
-    return cardValue;
-  }
+  // initialiseCommunityCards() {
+  //   // Remove community cards from the deck
+  //   this.communityCardSet.forEach((card) => {
+  //     this.deck.removeCardsFromDeck(card.value, card.suit);
+  //   });
+  // }
 
   startGame() {
     this.deck.shuffleDeck();
@@ -79,13 +56,13 @@ class Game {
         const cardElement = playerCards.children[i];
         cardElement.classList.remove("card-outline");
 
-        if ((card.suit == "heart") | (card.suit == "diamond")) {
+        if (card.getSuitColour() === "red") {
           cardElement.classList.add("card-red");
         }
 
-        const cardValue = this.getCardValue(card);
-
-        cardElement.textContent = cardValue + suitSymbols[card.suit];
+        const cardValue = card.getDisplayValue();
+        const suitSymbol = card.getSuitSymbol();
+        cardElement.textContent = cardValue + suitSymbol;
 
         if (!player.showCards) {
           cardElement.classList.add("card-hidden");
@@ -116,13 +93,13 @@ class Game {
       );
       cardElement.classList.remove("card-outline");
 
-      if ((card.suit == "heart") | (card.suit == "diamond")) {
+      if (card.getSuitColour() === "red") {
         cardElement.classList.add("card-red");
       }
 
-      const cardValue = this.getCardValue(card);
-
-      cardElement.textContent = cardValue + suitSymbols[card.suit];
+      const cardValue = card.getDisplayValue();
+      const suitSymbol = card.getSuitSymbol();
+      cardElement.textContent = cardValue + suitSymbol;
     });
 
     deckElement.textContent = "Deck (" + this.deck.cards.length + ")";
@@ -145,12 +122,13 @@ class Game {
     const cardElement = document.getElementById("community-card-turn");
     cardElement.classList.remove("card-outline");
 
-    if ((turnCard.suit == "heart") | (turnCard.suit == "diamond")) {
+    if (turnCard.getSuitColour() === "red") {
       cardElement.classList.add("card-red");
     }
-    const cardValue = this.getCardValue(turnCard);
 
-    cardElement.textContent = cardValue + suitSymbols[turnCard.suit];
+    const cardValue = turnCard.getDisplayValue();
+    const suitSymbol = turnCard.getSuitSymbol();
+    cardElement.textContent = cardValue + suitSymbol;
 
     deckElement.textContent = "Deck (" + this.deck.cards.length + ")";
     discardElement.textContent = "Discard (" + this.discardPile.length + ")";
@@ -172,13 +150,13 @@ class Game {
     const cardElement = document.getElementById("community-card-river");
     cardElement.classList.remove("card-outline");
 
-    if ((riverCard.suit == "heart") | (riverCard.suit == "diamond")) {
+    if (riverCard.getSuitColour() === "red") {
       cardElement.classList.add("card-red");
     }
 
-    const cardValue = this.getCardValue(riverCard);
-
-    cardElement.textContent = cardValue + suitSymbols[riverCard.suit];
+    const cardValue = riverCard.getDisplayValue();
+    const suitSymbol = riverCard.getSuitSymbol();
+    cardElement.textContent = cardValue + suitSymbol;
 
     deckElement.textContent = "Deck (" + this.deck.cards.length + ")";
     discardElement.textContent = "Discard (" + this.discardPile.length + ")";
@@ -195,8 +173,6 @@ class Game {
     });
 
     results.sort((a, b) => b.rank - a.rank);
-
-    console.log("Results", results);
 
     const list = document.createElement("ul");
 
@@ -215,8 +191,14 @@ class Game {
 
       // Player hand
       const playerHand = document.createElement("span");
-      playerHand.textContent = `${result.rankName}: ${result.cards
-        .map((card) => `${card.value}${suitSymbols[card.suit]}`)
+      playerHand.innerHTML = `${result.rankName}: ${result.cards
+        .map((card) => {
+          const cardValue = card.getDisplayValue();
+          const suitSymbol = card.getSuitSymbol();
+          const suitColour = card.getSuitColour();
+          const cardClass = suitColour === "red" ? "card-red" : "";
+          return `<span class="${cardClass}">${cardValue}${suitSymbol}</span>`;
+        })
         .join(", ")}`;
 
       // Append name, rank, and hand to list item
