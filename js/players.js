@@ -8,11 +8,11 @@ class Player {
 
 // Hardcoded Players
 const zoe = new Player("Zoe", [], true);
-const mike = new Player("Mike", [], true);
-const fran = new Player("Fran", [], true);
-const bron = new Player("Bron", [], true);
-const char = new Player("Char", [], true);
-const henry = new Player("Mushy Peas", [], true);
+const mike = new Player("Mike", [], false);
+const fran = new Player("Fran", [], false);
+const bron = new Player("Bron", [], false);
+const char = new Player("Char", [], false);
+const henry = new Player("Mushy Peas", [], false);
 
 // export const players = [zoe, mike];
-export const players = [zoe, mike, fran, bron, char];
+export const players = [zoe, mike, fran, bron, char, henry];

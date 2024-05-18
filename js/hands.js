@@ -1,33 +1,3 @@
-function evaluateRankByHighestCards(
-  cards,
-  excludeCardValue = -1,
-  excludeCardValue2 = -1,
-  limitCheck = 7,
-  normalize = 433175
-) {
-  let sum = 0;
-  let i = 0;
-  const fixedSize = cards.length - 1;
-
-  for (let j = fixedSize; j >= 0; j--) {
-    const cardValue = parseInt(cards[j].value);
-
-    if (cardValue === excludeCardValue || cardValue === excludeCardValue2)
-      continue;
-
-    const normalizedValue = cardValue - 2; // since CardValue is an integer between [2,14]
-    sum += normalizedValue * Math.pow(13, fixedSize - i);
-
-    if (i === limitCheck - 1) break;
-
-    i++;
-  }
-
-  return sum / normalize;
-}
-
-const suits = ["spade", "heart", "diamond", "club"];
-
 // Royal flush: 900
 const isRoyalFlush = (cards) => {
   const royalValues = ["10", "11", "12", "13", "14"];
@@ -326,13 +296,171 @@ const getStraightRank = (cards) => {
   return bestStraight;
 };
 
+// Three of a kind: 300 - 400
+const getThreeOfAKindRank = (cards) => {
+  const valueCount = {};
+  cards.forEach((card) => {
+    valueCount[card.value] = (valueCount[card.value] || 0) + 1;
+  });
+
+  let threeOfAKindValue = null;
+
+  for (const value in valueCount) {
+    if (valueCount[value] === 3) {
+      threeOfAKindValue = value;
+      break;
+    }
+  }
+
+  if (threeOfAKindValue) {
+    const threeOfAKindCards = cards.filter(
+      (card) => card.value === threeOfAKindValue
+    );
+    const kickerCandidates = cards
+      .filter((card) => card.value !== threeOfAKindValue)
+      .sort((a, b) => parseInt(b.value) - parseInt(a.value));
+
+    const kickers = kickerCandidates.slice(0, 2); // Take the highest two kickers
+
+    // Calculate the rank taking into account the three of a kind and the two kickers
+    const threeOfAKindRank = 300 + (parseInt(threeOfAKindValue) / 14) * 99;
+    const finalRank =
+      threeOfAKindRank +
+      (parseInt(kickers[0].value) / 14) * (99 / 14) +
+      (parseInt(kickers[1].value) / 14) * (99 / 28);
+
+    return {
+      rankName: "Three of a Kind",
+      rank: finalRank,
+      cards: [...threeOfAKindCards, ...kickers],
+    };
+  }
+
+  return null;
+};
+
+// Two pair: 200 - 300
+const getTwoPairRank = (cards) => {
+  const valueCount = {};
+  cards.forEach((card) => {
+    valueCount[card.value] = (valueCount[card.value] || 0) + 1;
+  });
+
+  let pairs = [];
+  for (const value in valueCount) {
+    if (valueCount[value] === 2) {
+      pairs.push(value);
+    }
+  }
+
+  if (pairs.length >= 2) {
+    pairs.sort((a, b) => parseInt(b) - parseInt(a)); // Sort pairs descending
+
+    const highestPairValue = pairs[0];
+    const secondHighestPairValue = pairs[1];
+
+    const highestPairCards = cards.filter(
+      (card) => card.value === highestPairValue
+    );
+    const secondHighestPairCards = cards.filter(
+      (card) => card.value === secondHighestPairValue
+    );
+    const kickerCandidates = cards
+      .filter(
+        (card) =>
+          card.value !== highestPairValue &&
+          card.value !== secondHighestPairValue
+      )
+      .sort((a, b) => parseInt(b.value) - parseInt(a.value));
+
+    const kicker = kickerCandidates[0]; // Take the highest kicker
+
+    // Calculate the rank taking into account the pairs and the kicker
+    const highestPairRank = 200 + (parseInt(highestPairValue) / 14) * 99;
+    const finalRank =
+      highestPairRank +
+      (parseInt(secondHighestPairValue) / 14) * (99 / 14) +
+      (parseInt(kicker.value) / 14) * (99 / 28);
+
+    return {
+      rankName: "Two Pair",
+      rank: finalRank,
+      cards: [...highestPairCards, ...secondHighestPairCards, kicker],
+    };
+  }
+
+  return null;
+};
+
+// One pair: 100 - 200
+const getOnePairRank = (cards) => {
+  const valueCount = {};
+  cards.forEach((card) => {
+    valueCount[card.value] = (valueCount[card.value] || 0) + 1;
+  });
+
+  let pairValue = null;
+
+  for (const value in valueCount) {
+    if (valueCount[value] === 2) {
+      pairValue = value;
+      break;
+    }
+  }
+
+  if (pairValue) {
+    const pairCards = cards.filter((card) => card.value === pairValue);
+    const kickerCandidates = cards
+      .filter((card) => card.value !== pairValue)
+      .sort((a, b) => parseInt(b.value) - parseInt(a.value));
+
+    const kickers = kickerCandidates.slice(0, 3); // Take the highest three kickers
+
+    // Calculate the rank taking into account the pair and the three kickers
+    const pairRank = 100 + (parseInt(pairValue) / 14) * 99;
+    const finalRank =
+      pairRank +
+      (parseInt(kickers[0].value) / 14) * (99 / 14) +
+      (parseInt(kickers[1].value) / 14) * (99 / 28) +
+      (parseInt(kickers[2].value) / 14) * (99 / 56);
+
+    return {
+      rankName: "One Pair",
+      rank: finalRank,
+      cards: [...pairCards, ...kickers],
+    };
+  }
+
+  return null;
+};
+
+// Highest card: < 100
+const getHighCardRank = (cards) => {
+  const sortedCards = cards.sort(
+    (a, b) => parseInt(b.value) - parseInt(a.value)
+  );
+  const topFiveCards = sortedCards.slice(0, 5);
+
+  // Calculate the rank based on the highest card and other high cards
+  const highestCardValue = parseInt(topFiveCards[0].value);
+  const highCardRank = (highestCardValue / 14) * 99;
+  const finalRank =
+    highCardRank +
+    (parseInt(topFiveCards[1].value) / 14) * (99 / 14) +
+    (parseInt(topFiveCards[2].value) / 14) * (99 / 28) +
+    (parseInt(topFiveCards[3].value) / 14) * (99 / 56) +
+    (parseInt(topFiveCards[4].value) / 14) * (99 / 112);
+
+  return {
+    rankName: "High Card",
+    rank: finalRank,
+    cards: topFiveCards,
+  };
+};
+
 export function getPlayerHandRank(player, communityCards) {
   // Combine player's cards and cards on the table
   const allCards = [...player.hand, ...communityCards];
-  console.log("Hand:", player, allCards);
-
-  // Ensure there are exactly 7 cards
-  if (allCards.length !== 7) return null;
 
   // Sort the cards by their values
   allCards.sort(
@@ -393,6 +521,40 @@ export function getPlayerHandRank(player, communityCards) {
                         rankName = straight.rankName;
                         rank = straight.rank;
                         rankCards = straight.cards;
+                      } else {
+                        const threeOfAKind = getThreeOfAKindRank(allCards);
+                        if (
+                          threeOfAKind &&
+                          (!rankName || threeOfAKind.rank > rank)
+                        ) {
+                          rankName = threeOfAKind.rankName;
+                          rank = threeOfAKind.rank;
+                          rankCards = threeOfAKind.cards;
+                        } else {
+                          const twoPair = getTwoPairRank(allCards);
+                          if (twoPair && (!rankName || twoPair.rank > rank)) {
+                            rankName = twoPair.rankName;
+                            rank = twoPair.rank;
+                            rankCards = twoPair.cards;
+                          } else {
+                            const onePair = getOnePairRank(allCards);
+                            if (onePair && (!rankName || onePair.rank > rank)) {
+                              rankName = onePair.rankName;
+                              rank = onePair.rank;
+                              rankCards = onePair.cards;
+                            } else {
+                              const highCard = getHighCardRank(allCards);
+                              if (
+                                highCard &&
+                                (!rankName || highCard.rank > rank)
+                              ) {
+                                rankName = highCard.rankName;
+                                rank = highCard.rank;
+                                rankCards = highCard.cards;
+                              }
+                            }
+                          }
+                        }
                       }
                     }
                   }
@@ -411,190 +573,7 @@ export function getPlayerHandRank(player, communityCards) {
 
   if (rankName) {
     console.log(`Hand is a ${rankName}`);
-  } else {
-    console.log("Hand is not a Royal Flush or Straight Flush");
   }
-
-  //   if (rankName == null) {
-  //     // For the other cases we'll sort the duplicate cards in descending order by the amount
-  //     duplicates.sort((x, y) => parseInt(y[0]) - parseInt(x[0]));
-
-  //
-  //   // Checks for a FULL HOUSE, rank: [600, 700)
-  //   // Edge case: there are 2 pairs of 2 and one Pair of 3, for example: 33322AA
-  //   else if (
-  //     duplicates.length > 2 &&
-  //     duplicates[0][0] == 3 &&
-  //     duplicates[1][0] == 2 &&
-  //     duplicates[2][0] == 2
-  //   ) {
-  //     // In that edge case, we'll check from the two pairs what is greater.
-  //     rankName = "Full House";
-  //     let maxTmpValue = Math.max(duplicates[1][1], duplicates[2][1]);
-  //     rank = 600 + parseInt(duplicates[0][1]) + maxTmpValue / 14;
-
-  //     for (let i = 0; i < 3; i++)
-  //       rankCards.push([duplicates[0][1].toString(), null]);
-
-  //     for (let i = 0; i < 2; i++)
-  //       rankCards.push([maxTmpValue.toString(), null]);
-  //   } else if (
-  //     duplicates.length > 1 &&
-  //     duplicates[0][0] == 3 &&
-  //     duplicates[1][0] == 2
-  //   ) {
-  //     rankName = "Full House";
-  //     rank = 600 + parseInt(duplicates[0][1]) + duplicates[1][1] / 14;
-
-  //     for (let i = 0; i < 3; i++)
-  //       rankCards.push([duplicates[0][1].toString(), null]);
-
-  //     for (let i = 0; i < 2; i++)
-  //       rankCards.push([duplicates[1][1].toString(), null]);
-  //   }
-
-  //   // Edge case where there are 2 pairs of Three of a kind
-  //   // For example if the case is 333 222 then we'll check what is better: 333 22 or 222 33.
-  //   else if (
-  //     duplicates.length > 1 &&
-  //     duplicates[0][0] == 3 &&
-  //     duplicates[1][0] == 3
-  //   ) {
-  //     rankName = "Full House";
-
-  //     let rank1 = 600 + parseInt(duplicates[0][1]) + duplicates[1][1] / 14;
-  //     let rank2 = 600 + parseInt(duplicates[1][1]) + duplicates[0][1] / 14;
-
-  //     if (rank1 > rank2) {
-  //       rank = rank1;
-  //       for (let i = 0; i < 3; i++)
-  //         rankCards.push([duplicates[0][1].toString(), null]);
-
-  //       for (let i = 0; i < 2; i++)
-  //         rankCards.push([duplicates[1][1].toString(), null]);
-  //     } else {
-  //       rank = rank2;
-  //       for (let i = 0; i < 3; i++)
-  //         rankCards.push([duplicates[1][1].toString(), null]);
-
-  //       for (let i = 0; i < 2; i++)
-  //         rankCards.push([duplicates[0][1].toString(), null]);
-  //     }
-  //   }
-  // }
-
-  //   // Checks for Straight, rank: [400, 500)
-  //   if (seqCountMax >= 5) {
-  //     rankName = "Straight";
-  //     rank = 400 + (seqMaxValue / 14) * 99;
-
-  //     for (let i = seqMaxValue; i > seqMaxValue - seqCountMax; i--) {
-  //       rankCards.push([i.toString(), null]);
-  //     }
-  //   }
-  //   // Edge case: there's seqCountMax of 4, and the highest card is 5,
-  //   // Which means the sequence looks like this: 2, 3, 4, 5
-  //   // In that case, we'll check if the last card is Ace to complete a sequence of 5 cards.
-  //   else if (seqCountMax == 4 && seqMaxValue == 5 && maxCardValue == 14) {
-  //     rankName = "Straight";
-
-  //     // In that case the highest card of the straight will be 5, and not Ace.
-  //     rank = 435.3571; // The result of 400 + 5/14 * 99
-
-  //     rankCards.push(["14", null]);
-  //     for (let i = 2; i < 5; i++) {
-  //       rankCards.push([i.toString(), null]);
-  //     }
-  //   }
-
-  //   // Checks for Three of a kind, rank: [300, 400)
-  //   if (duplicates.length > 0 && duplicates[0][0] == 3) {
-  //     rankName = "Three of a kind";
-  //     rank =
-  //       300 +
-  //       (duplicates[0][1] / 14) * 50 +
-  //       evaluateRankByHighestCards(allCards, parseInt(duplicates[0][1]));
-
-  //     for (let i = 0; i < 3; i++) {
-  //       rankCards.push([duplicates[0][1].toString(), null]);
-  //     }
-  //   }
-
-  //   // Checks for Two Pairs, rank: [200, 300)
-  //   else if (
-  //     duplicates.length > 1 &&
-  //     duplicates[0][0] == 2 &&
-  //     duplicates[1][0] == 2
-  //   ) {
-  //     rankName = "Two Pairs";
-
-  //     // Edge case: there are 3 pairs of Two Pairs, in that case we'll choose the higher one.
-  //     if (duplicates.length > 2 && duplicates[2][0] == 2) {
-  //       let threePairsValues = [
-  //         duplicates[0][1],
-  //         duplicates[1][1],
-  //         duplicates[2][1],
-  //       ];
-  //       threePairsValues.sort((x, y) => y - x);
-
-  //       // The reason for 50 is because maxCardValue/14 can be 1, and we don't want to get the score 300.
-  //       // and its also the reason for /392 instead of /14 is.
-  //       rank =
-  //         200 +
-  //         (Math.pow(threePairsValues[0], 2) / 392 +
-  //           Math.pow(threePairsValues[1], 2) / 392) *
-  //           50 +
-  //         evaluateRankByHighestCards(
-  //           allCards,
-  //           parseInt(threePairsValues[0]),
-  //           parseInt(threePairsValues[1])
-  //         );
-
-  //       // We need only the 2 highest pairs from the 3 pairs.
-  //       rankCards.push([threePairsValues[0].toString(), null]);
-  //       rankCards.push([threePairsValues[1].toString(), null]);
-  //     } else {
-  //       rank =
-  //         200 +
-  //         (Math.pow(duplicates[0][1], 2) / 392 +
-  //           Math.pow(duplicates[1][1], 2) / 392) *
-  //           50 +
-  //         evaluateRankByHighestCards(
-  //           allCards,
-  //           parseInt(duplicates[0][1]),
-  //           parseInt(duplicates[1][1])
-  //         );
-
-  //       for (let i = 0; i < 2; i++) {
-  //         rankCards.push([duplicates[0][1].toString(), null]);
-  //       }
-
-  //       for (let i = 0; i < 2; i++) {
-  //         rankCards.push([duplicates[1][1].toString(), null]);
-  //       }
-  //     }
-  //   }
-
-  //   // Check for One Pair, rank: [100, 200)
-  //   else if (duplicates.length > 0 && duplicates[0][0] == 2) {
-  //     // Pair
-  //     rankName = "Pair";
-  //     rank =
-  //       100 +
-  //       (duplicates[0][1] / 14) * 50 +
-  //       evaluateRankByHighestCards(allCards, parseInt(duplicates[0][1]), -1, 3);
-
-  //     for (let i = 0; i < 2; i++) {
-  //       rankCards.push([duplicates[0][1].toString(), null]);
-  //     }
-  //   }
-
-  //   // Otherwise, it's High Card, rank: [0, 100)
-  //   else {
-  //     rankName = "High Card";
-  //     rank = evaluateRankByHighestCards(allCards, -1, -1, 5);
-  //     rankCards.push([maxCardValue.toString(), null]);
-  //   }
 
   return {
     rankName,
