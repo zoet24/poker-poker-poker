@@ -459,6 +459,43 @@ const getHighCardRank = (cards) => {
   };
 };
 
+// Work out what hand a player has
+const evaluateHandRank = (hand) => {
+  if (isRoyalFlush(hand)) {
+    return {
+      rankName: "Royal Flush",
+      rank: 900,
+      cards: hand,
+    };
+  }
+
+  const straightFlush = getStraightFlushRank(hand);
+  if (straightFlush) return straightFlush;
+
+  const fourOfAKind = getFourOfAKindRank(hand);
+  if (fourOfAKind) return fourOfAKind;
+
+  const fullHouse = getFullHouseRank(hand);
+  if (fullHouse) return fullHouse;
+
+  const flush = getFlushRank(hand);
+  if (flush) return flush;
+
+  const straight = getStraightRank(hand);
+  if (straight) return straight;
+
+  const threeOfAKind = getThreeOfAKindRank(hand);
+  if (threeOfAKind) return threeOfAKind;
+
+  const twoPair = getTwoPairRank(hand);
+  if (twoPair) return twoPair;
+
+  const onePair = getOnePairRank(hand);
+  if (onePair) return onePair;
+
+  return getHighCardRank(hand);
+};
+
 export function getPlayerHandRank(player, communityCards) {
   // Combine player's cards and cards on the table
   const allCards = [...player.hand, ...communityCards];
@@ -469,11 +506,9 @@ export function getPlayerHandRank(player, communityCards) {
       parseInt(a.value) - parseInt(b.value) || a.suit.localeCompare(b.suit)
   );
 
-  // Evaluate hand rank based on rules
-  let rankName,
-    rank,
-    rankCards = [];
+  let bestHand = null;
 
+  // Evaluate hand rank based on rules
   for (let i = 0; i < allCards.length - 4; i++) {
     for (let j = i + 1; j < allCards.length - 3; j++) {
       for (let k = j + 1; k < allCards.length - 2; k++) {
@@ -487,98 +522,29 @@ export function getPlayerHandRank(player, communityCards) {
               allCards[m],
             ];
 
-            if (isRoyalFlush(hand)) {
-              rankName = "Royal Flush";
-              rank = 900;
-              rankCards = hand;
-              break;
-            } else {
-              const straightFlush = getStraightFlushRank(hand);
-              if (straightFlush && (!rankName || straightFlush.rank > rank)) {
-                rankName = straightFlush.rankName;
-                rank = straightFlush.rank;
-                rankCards = straightFlush.cards;
-              } else {
-                const fourOfAKind = getFourOfAKindRank(allCards);
-                if (fourOfAKind && (!rankName || fourOfAKind.rank > rank)) {
-                  rankName = fourOfAKind.rankName;
-                  rank = fourOfAKind.rank;
-                  rankCards = fourOfAKind.cards;
-                } else {
-                  const fullHouse = getFullHouseRank(allCards);
-                  if (fullHouse && (!rankName || fullHouse.rank > rank)) {
-                    rankName = fullHouse.rankName;
-                    rank = fullHouse.rank;
-                    rankCards = fullHouse.cards;
-                  } else {
-                    const flush = getFlushRank(allCards);
-                    if (flush && (!rankName || flush.rank > rank)) {
-                      rankName = flush.rankName;
-                      rank = flush.rank;
-                      rankCards = flush.cards;
-                    } else {
-                      const straight = getStraightRank(allCards);
-                      if (straight && (!rankName || straight.rank > rank)) {
-                        rankName = straight.rankName;
-                        rank = straight.rank;
-                        rankCards = straight.cards;
-                      } else {
-                        const threeOfAKind = getThreeOfAKindRank(allCards);
-                        if (
-                          threeOfAKind &&
-                          (!rankName || threeOfAKind.rank > rank)
-                        ) {
-                          rankName = threeOfAKind.rankName;
-                          rank = threeOfAKind.rank;
-                          rankCards = threeOfAKind.cards;
-                        } else {
-                          const twoPair = getTwoPairRank(allCards);
-                          if (twoPair && (!rankName || twoPair.rank > rank)) {
-                            rankName = twoPair.rankName;
-                            rank = twoPair.rank;
-                            rankCards = twoPair.cards;
-                          } else {
-                            const onePair = getOnePairRank(allCards);
-                            if (onePair && (!rankName || onePair.rank > rank)) {
-                              rankName = onePair.rankName;
-                              rank = onePair.rank;
-                              rankCards = onePair.cards;
-                            } else {
-                              const highCard = getHighCardRank(allCards);
-                              if (
-                                highCard &&
-                                (!rankName || highCard.rank > rank)
-                              ) {
-                                rankName = highCard.rankName;
-                                rank = highCard.rank;
-                                rankCards = highCard.cards;
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
+            const currentHand = evaluateHandRank(hand);
+            if (!bestHand || currentHand.rank > bestHand.rank) {
+              bestHand = currentHand;
             }
+
+            if (bestHand.rankName === "Royal Flush") break;
           }
-          if (rankName === "Royal Flush") break;
+          if (bestHand.rankName === "Royal Flush") break;
         }
-        if (rankName === "Royal Flush") break;
+        if (bestHand.rankName === "Royal Flush") break;
       }
-      if (rankName === "Royal Flush") break;
+      if (bestHand.rankName === "Royal Flush") break;
     }
-    if (rankName === "Royal Flush") break;
+    if (bestHand.rankName === "Royal Flush") break;
   }
 
-  if (rankName) {
-    console.log(`Hand is a ${rankName}`);
+  if (bestHand) {
+    console.log(`Hand is a ${bestHand.rankName}`);
   }
 
   return {
-    rankName,
-    rank,
-    cards: rankCards,
+    rankName: bestHand.rankName,
+    rank: bestHand.rank,
+    cards: bestHand.cards,
   };
 }
