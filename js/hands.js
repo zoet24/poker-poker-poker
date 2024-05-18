@@ -105,6 +105,116 @@ const getStraightFlushRank = (cards) => {
   return bestStraightFlush;
 };
 
+const getFourOfAKindRank = (cards) => {
+  const valueCount = {};
+  cards.forEach((card) => {
+    valueCount[card.value] = (valueCount[card.value] || 0) + 1;
+  });
+
+  let fourOfAKindValue = null;
+  for (const value in valueCount) {
+    if (valueCount[value] === 4) {
+      fourOfAKindValue = value;
+      break;
+    }
+  }
+
+  if (fourOfAKindValue) {
+    const fourOfAKindCards = cards.filter(
+      (card) => card.value === fourOfAKindValue
+    );
+
+    const kickerCandidates = cards
+      .filter((card) => card.value !== fourOfAKindValue)
+      .sort((a, b) => parseInt(b.value) - parseInt(a.value)); // Sort in descending order
+
+    const kicker = kickerCandidates[0]; // Take the highest value card
+    const kickerValue = parseInt(kicker.value);
+    const fourOfAKindRank = 700 + (parseInt(fourOfAKindValue) / 14) * 99;
+    const finalRank = fourOfAKindRank + (kickerValue / 14) * (99 / 14);
+
+    return {
+      rankName: "Four of a Kind",
+      rank: finalRank,
+      cards: [...fourOfAKindCards, kicker],
+    };
+  }
+  return null;
+};
+
+const getFullHouseRank = (cards) => {
+  const valueCount = {};
+  cards.forEach((card) => {
+    valueCount[card.value] = (valueCount[card.value] || 0) + 1;
+  });
+
+  let threeOfAKindValues = [];
+  let pairValues = [];
+
+  for (const value in valueCount) {
+    if (valueCount[value] === 3) {
+      threeOfAKindValues.push(value);
+    } else if (valueCount[value] === 2) {
+      pairValues.push(value);
+    }
+  }
+
+  threeOfAKindValues.sort((a, b) => parseInt(b) - parseInt(a)); // Sort descending
+  pairValues.sort((a, b) => parseInt(b) - parseInt(a)); // Sort descending
+
+  let bestFullHouse = null;
+
+  if (threeOfAKindValues.length > 0 && pairValues.length > 0) {
+    // Case: At least one Three of a Kind and one Pair
+    const bestThreeOfAKindValue = threeOfAKindValues[0];
+    const bestPairValue = pairValues[0];
+
+    const threeOfAKindCards = cards.filter(
+      (card) => card.value === bestThreeOfAKindValue
+    );
+    const pairCards = cards.filter((card) => card.value === bestPairValue);
+
+    const threeOfAKindRank = 600 + (parseInt(bestThreeOfAKindValue) / 14) * 99;
+    const finalRank =
+      threeOfAKindRank + (parseInt(bestPairValue) / 14) * (99 / 14);
+
+    bestFullHouse = {
+      rankName: "Full House",
+      rank: finalRank,
+      cards: [...threeOfAKindCards, ...pairCards],
+    };
+  }
+
+  if (threeOfAKindValues.length > 1) {
+    // Case: Two Three of a Kind sets
+    const bestThreeOfAKindValue = threeOfAKindValues[0];
+    const secondThreeOfAKindValue = threeOfAKindValues[1];
+
+    const threeOfAKindCards = cards.filter(
+      (card) => card.value === bestThreeOfAKindValue
+    );
+    const pairCards = cards.filter(
+      (card) => card.value === secondThreeOfAKindValue
+    );
+
+    const threeOfAKindRank = 600 + (parseInt(bestThreeOfAKindValue) / 14) * 99;
+    const finalRank =
+      threeOfAKindRank + (parseInt(secondThreeOfAKindValue) / 14) * (99 / 14);
+
+    const fullHouse = {
+      rankName: "Full House",
+      rank: finalRank,
+      cards: [...threeOfAKindCards, ...pairCards],
+    };
+
+    if (!bestFullHouse || fullHouse.rank > bestFullHouse.rank) {
+      bestFullHouse = fullHouse;
+    }
+  }
+
+  return bestFullHouse;
+};
+
 export function getPlayerHandRank(player, communityCards) {
   // Combine player's cards and cards on the table
   const allCards = [...player.hand, ...communityCards];
@@ -114,7 +224,10 @@ export function getPlayerHandRank(player, communityCards) {
   if (allCards.length !== 7) return null;
 
   // Sort the cards by their values
-  allCards.sort((x, y) => parseInt(x.value) - parseInt(y.value));
+  allCards.sort(
+    (a, b) =>
+      parseInt(a.value) - parseInt(b.value) || a.suit.localeCompare(b.suit)
+  );
 
   // Evaluate hand rank based on rules
   let rankName,
@@ -145,6 +258,21 @@ export function getPlayerHandRank(player, communityCards) {
                 rankName = straightFlush.rankName;
                 rank = straightFlush.rank;
                 rankCards = straightFlush.cards;
+              } else {
+                const fourOfAKind = getFourOfAKindRank(allCards);
+                if (fourOfAKind && (!rankName || fourOfAKind.rank > rank)) {
+                  rankName = fourOfAKind.rankName;
+                  rank = fourOfAKind.rank;
+                  rankCards = fourOfAKind.cards;
+                } else {
+                  const fullHouse = getFullHouseRank(allCards);
+                  if (fullHouse && (!rankName || fullHouse.rank > rank)) {
+                    rankName = fullHouse.rankName;
+                    rank = fullHouse.rank;
+                    rankCards = fullHouse.cards;
+                    console.log("Updated best hand to Full House", rankCards);
+                  }
+                }
               }
             }
           }
@@ -163,72 +291,11 @@ export function getPlayerHandRank(player, communityCards) {
     console.log("Hand is not a Royal Flush or Straight Flush");
   }
 
-  // Checks for STRAIGHT FLUSH, rank: [800, 900)
-  // for (const suit of suits) {
-  //   const suitCards = allCards.filter((x) => x.suit === suit);
-  //   if (suitCards.length >= 5) {
-  //     // There's no way for duplicates, since every card in the same suit is unique
-  //     let counter = 1;
-  //     let lastValue = -1;
-  //     const straightFlushCards = [];
-  //     for (let i = 0; i < suitCards.length - 1; i++) {
-  //       if (
-  //         parseInt(suitCards[i].value) + 1 ===
-  //         parseInt(suitCards[i + 1].value)
-  //       ) {
-  //         counter++;
-  //         lastValue = parseInt(suitCards[i + 1].value);
-  //         straightFlushCards.push(suitCards[i]);
-  //       } else {
-  //         counter = 1;
-  //         straightFlushCards.length = 0;
-  //       }
-  //     }
-
-  //     if (counter >= 5) {
-  //       rankName = "Straight Flush";
-  //       rank = 800 + (lastValue / 14) * 99;
-  //       rankCards.push(...straightFlushCards);
-  //     }
-  //     // Will cover situations like this: 2,3,4,5,A,A,A
-  //     // In that case we should check the 3 last cards if they are Ace and have the same suit has the 4th card.
-
-  //     // Edge case where we have: 2,3,4,5 and then somewhere 14 ( must be last card )
-  //     // In that case we'll declare as Straight Flush as well with highest card 5.
-  //     else if (
-  //       counter === 4 &&
-  //       lastValue === 5 &&
-  //       suitCards[suitCards.length - 1].value === "14"
-  //     ) {
-  //       rankName = "Straight Flush";
-  //       rank = 835.3571; // The result of: 800 + 5 / 14 * 99
-  //       rankCards.push(...straightFlushCards);
-  //     }
-  //   }
-  // }
-
   //   if (rankName == null) {
   //     // For the other cases we'll sort the duplicate cards in descending order by the amount
   //     duplicates.sort((x, y) => parseInt(y[0]) - parseInt(x[0]));
 
-  //     // Checks for FOUR OF A KIND, rank: [700, 800)
-  //     if (duplicates.length > 0 && duplicates[0][0] == 4) {
-  //       rankName = "Four of a kind";
-  //       rank =
-  //         700 +
-  //         (duplicates[0][1] / 14) * 50 +
-  //         evaluateRankByHighestCards(
-  //           allCards,
-  //           parseInt(duplicates[0][1]),
-  //           -1,
-  //           1
-  //         );
-
-  //       suits.forEach((suit) =>
-  //         rankCards.push([duplicates[0][1].toString(), suit])
-  //       );
-  //     }
-  //   }
+  //
   //   // Checks for a FULL HOUSE, rank: [600, 700)
   //   // Edge case: there are 2 pairs of 2 and one Pair of 3, for example: 33322AA
   //   else if (
