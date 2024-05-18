@@ -28,6 +28,7 @@ function evaluateRankByHighestCards(
 
 const suits = ["spade", "heart", "diamond", "club"];
 
+// Royal flush: 900
 const isRoyalFlush = (cards) => {
   const royalValues = ["10", "11", "12", "13", "14"];
   const suits = new Set(cards.map((card) => card.suit));
@@ -40,6 +41,7 @@ const isRoyalFlush = (cards) => {
   );
 };
 
+// Straight flush: 800 - 900
 const getStraightFlushRank = (cards) => {
   const suits = ["spade", "heart", "diamond", "club"];
   let bestStraightFlush = null;
@@ -105,6 +107,7 @@ const getStraightFlushRank = (cards) => {
   return bestStraightFlush;
 };
 
+// Four of a kind: 700 - 800
 const getFourOfAKindRank = (cards) => {
   const valueCount = {};
   cards.forEach((card) => {
@@ -142,6 +145,7 @@ const getFourOfAKindRank = (cards) => {
   return null;
 };
 
+// Full house: 600 - 700
 const getFullHouseRank = (cards) => {
   const valueCount = {};
   cards.forEach((card) => {
@@ -215,6 +219,113 @@ const getFullHouseRank = (cards) => {
   return bestFullHouse;
 };
 
+// Flush: 500 - 600
+const getFlushRank = (cards) => {
+  const suits = {};
+  cards.forEach((card) => {
+    suits[card.suit] = (suits[card.suit] || 0) + 1;
+  });
+
+  // Check if there is a suit with at least 5 cards
+  for (const suit in suits) {
+    if (suits[suit] >= 5) {
+      const flushCards = cards
+        .filter((card) => card.suit === suit)
+        .sort((a, b) => parseInt(b.value) - parseInt(a.value));
+      const topFiveFlushCards = flushCards.slice(0, 5); // Take the highest 5 cards of the flush
+
+      // Calculate the rank based on the highest card in the flush
+      const highestCardValue = parseInt(topFiveFlushCards[0].value);
+      const flushRank = 500 + (highestCardValue / 14) * 99;
+
+      return {
+        rankName: "Flush",
+        rank: flushRank,
+        cards: topFiveFlushCards,
+      };
+    }
+  }
+
+  return null;
+};
+
+// Straight: 400 - 500
+const getStraightRank = (cards) => {
+  // Extract values and sort them
+  let values = cards.map((card) => parseInt(card.value)).sort((a, b) => a - b);
+
+  // Remove duplicates
+  values = [...new Set(values)];
+
+  let bestStraight = null;
+
+  // Check for standard straight (5 consecutive values)
+  for (let i = 0; i <= values.length - 5; i++) {
+    if (
+      values[i] + 1 === values[i + 1] &&
+      values[i + 1] + 1 === values[i + 2] &&
+      values[i + 2] + 1 === values[i + 3] &&
+      values[i + 3] + 1 === values[i + 4]
+    ) {
+      const highestCardValue = values[i + 4];
+      const straightRank = 400 + (highestCardValue / 14) * 99;
+
+      const straightValues = [
+        values[i],
+        values[i + 1],
+        values[i + 2],
+        values[i + 3],
+        values[i + 4],
+      ];
+      const straightCards = [];
+      const usedValues = new Set();
+
+      for (const value of straightValues) {
+        for (const card of cards) {
+          if (parseInt(card.value) === value && !usedValues.has(value)) {
+            straightCards.push(card);
+            usedValues.add(value);
+            break;
+          }
+        }
+      }
+
+      bestStraight = {
+        rankName: "Straight",
+        rank: straightRank,
+        cards: straightCards,
+      };
+    }
+  }
+
+  // Special case for wheel straight (A-2-3-4-5)
+  if (
+    values.includes(14) &&
+    values.includes(2) &&
+    values.includes(3) &&
+    values.includes(4) &&
+    values.includes(5)
+  ) {
+    const straightRank = 400 + (5 / 14) * 99;
+
+    const straightCards = cards.filter((card) =>
+      ["14", "2", "3", "4", "5"].includes(card.value)
+    );
+
+    const wheelStraight = {
+      rankName: "Straight",
+      rank: straightRank,
+      cards: straightCards,
+    };
+
+    if (!bestStraight || wheelStraight.rank > bestStraight.rank) {
+      bestStraight = wheelStraight;
+    }
+  }
+
+  return bestStraight;
+};
+
 export function getPlayerHandRank(player, communityCards) {
   // Combine player's cards and cards on the table
   const allCards = [...player.hand, ...communityCards];
@@ -270,7 +381,20 @@ export function getPlayerHandRank(player, communityCards) {
                     rankName = fullHouse.rankName;
                     rank = fullHouse.rank;
                     rankCards = fullHouse.cards;
-                    console.log("Updated best hand to Full House", rankCards);
+                  } else {
+                    const flush = getFlushRank(allCards);
+                    if (flush && (!rankName || flush.rank > rank)) {
+                      rankName = flush.rankName;
+                      rank = flush.rank;
+                      rankCards = flush.cards;
+                    } else {
+                      const straight = getStraightRank(allCards);
+                      if (straight && (!rankName || straight.rank > rank)) {
+                        rankName = straight.rankName;
+                        rank = straight.rank;
+                        rankCards = straight.cards;
+                      }
+                    }
                   }
                 }
               }
