@@ -51,4 +51,27 @@ players.forEach((player, index) => {
   playerContainer.style.left = x + "px";
   playerContainer.style.top = y + "px";
   playerContainer.style.transform = `rotate(${angle - 90}deg)`;
+
+  // Add event listener to toggle showCards
+  playerContainer.addEventListener("click", () =>
+    toggleShowCards(player, playerCards)
+  );
 });
+
+// Function to toggle showCards property and update card visibility
+const toggleShowCards = (player, playerCards) => {
+  player.showCards = !player.showCards;
+  updatePlayerCards(player, playerCards);
+};
+
+// Function to update the player's card display based on the showCards property
+const updatePlayerCards = (player, playerCards) => {
+  const cards = playerCards.querySelectorAll(".card");
+  cards.forEach((card) => {
+    if (player.showCards) {
+      card.classList.remove("card-hidden");
+    } else {
+      card.classList.add("card-hidden");
+    }
+  });
+};
