@@ -31,7 +31,7 @@ class Game {
 
   startGame() {
     this.deck.shuffleDeck();
-    deckElement.classList.remove("card-outline");
+    deckElement.classList.remove("card--outline");
 
     deckElement.textContent = "Deck (" + this.deck.cards.length + ")";
     console.log("Initial deck:", this.deck);
@@ -49,15 +49,15 @@ class Game {
       player.hand.push(this.deck.drawCard());
 
       const playerCards = document.getElementById(
-        `cards-player-${player.name.replace(/\s/g, "").toLowerCase()}`
+        `cards--player-${player.name.replace(/\s/g, "").toLowerCase()}`
       );
 
       player.hand.forEach((card, i) => {
         const cardElement = playerCards.children[i];
-        cardElement.classList.remove("card-outline");
+        cardElement.classList.remove("card--outline");
 
         if (card.getSuitColour() === "red") {
-          cardElement.classList.add("card-red");
+          cardElement.classList.add("card--red");
         }
 
         const cardValue = card.getDisplayValue();
@@ -65,7 +65,7 @@ class Game {
         cardElement.textContent = cardValue + suitSymbol;
 
         if (!player.showCards) {
-          cardElement.classList.add("card-hidden");
+          cardElement.classList.add("card--hidden");
         }
       });
     });
@@ -80,7 +80,7 @@ class Game {
   dealFlop() {
     // Burn one card, reveal flop cards
     this.discardPile.push(this.deck.drawCard());
-    discardElement.classList.remove("card-outline");
+    discardElement.classList.remove("card--outline");
     for (let i = 0; i < 3; i++) {
       this.communityCards.push(this.deck.drawCard());
     }
@@ -91,10 +91,10 @@ class Game {
       const cardElement = document.getElementById(
         `community-card-flop${i + 1}`
       );
-      cardElement.classList.remove("card-outline");
+      cardElement.classList.remove("card--outline");
 
       if (card.getSuitColour() === "red") {
-        cardElement.classList.add("card-red");
+        cardElement.classList.add("card--red");
       }
 
       const cardValue = card.getDisplayValue();
@@ -120,10 +120,10 @@ class Game {
     // this.communityCards.push(turnCard);
 
     const cardElement = document.getElementById("community-card-turn");
-    cardElement.classList.remove("card-outline");
+    cardElement.classList.remove("card--outline");
 
     if (turnCard.getSuitColour() === "red") {
-      cardElement.classList.add("card-red");
+      cardElement.classList.add("card--red");
     }
 
     const cardValue = turnCard.getDisplayValue();
@@ -148,10 +148,10 @@ class Game {
     // this.communityCards.push(riverCard);
 
     const cardElement = document.getElementById("community-card-river");
-    cardElement.classList.remove("card-outline");
+    cardElement.classList.remove("card--outline");
 
     if (riverCard.getSuitColour() === "red") {
-      cardElement.classList.add("card-red");
+      cardElement.classList.add("card--red");
     }
 
     const cardValue = riverCard.getDisplayValue();
@@ -196,7 +196,7 @@ class Game {
           const cardValue = card.getDisplayValue();
           const suitSymbol = card.getSuitSymbol();
           const suitColour = card.getSuitColour();
-          const cardClass = suitColour === "red" ? "card-red" : "";
+          const cardClass = suitColour === "red" ? "card--red" : "";
           return `<span class="${cardClass}">${cardValue}${suitSymbol}</span>`;
         })
         .join(", ")}`;
@@ -233,9 +233,9 @@ class Game {
 
     // Iterate over each card element
     cards.forEach((card) => {
-      card.classList.add("card-outline");
-      card.classList.remove("card-red");
-      card.classList.remove("card-hidden");
+      card.classList.add("card--outline");
+      card.classList.remove("card--red");
+      card.classList.remove("card--hidden");
 
       if (card.id !== "deck" && card.id !== "discard") {
         card.textContent = "";

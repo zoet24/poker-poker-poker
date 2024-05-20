@@ -1,0 +1,18 @@
+{
+  "devDependencies": {
+    "autoprefixer": "^10.4.19",
+    "npm-run-all": "^4.1.5",
+    "postcss": "^8.4.38",
+    "postcss-cli": "^11.0.0",
+    "sass": "^1.77.2",
+    "tailwindcss": "^3.4.3"
+  },
+  "scripts": {
+    "build:sass": "sass src/styles.scss dist/styles.css",
+    "build:tailwind": "npx postcss dist/styles.css -o dist/main.css",
+    "build": "npm-run-all build:sass build:tailwind",
+    "watch:sass": "sass --watch src/styles.scss dist/styles.css",
+    "watch:tailwind": "npx postcss dist/styles.css -o dist/main.css --watch",
+    "watch": "npm-run-all --parallel watch:sass watch:tailwind"
+  }
+}

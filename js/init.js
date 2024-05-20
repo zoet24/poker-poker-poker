@@ -26,15 +26,15 @@ players.forEach((player, index) => {
 
   // Create players' cards
   const playerCards = document.createElement("div");
-  playerCards.classList.add("cards-player");
+  playerCards.classList.add("cards--player");
   playerCards.id =
-    "cards-player-" + player.name.replace(/\s/g, "").toLowerCase();
+    "cards--player-" + player.name.replace(/\s/g, "").toLowerCase();
 
   const [card1, card2] = Array.from({ length: 2 }, () => {
     const card = document.createElement("div");
     card.classList.add("card");
     if (player.hand.length === 0) {
-      card.classList.add("card-outline");
+      card.classList.add("card--outline");
     }
     return card;
   });
@@ -69,9 +69,9 @@ const updatePlayerCards = (player, playerCards) => {
   const cards = playerCards.querySelectorAll(".card");
   cards.forEach((card) => {
     if (player.showCards) {
-      card.classList.remove("card-hidden");
+      card.classList.remove("card--hidden");
     } else {
-      card.classList.add("card-hidden");
+      card.classList.add("card--hidden");
     }
   });
 };
