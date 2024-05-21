@@ -1,5 +1,5 @@
 import { players } from "./players.js";
-import { Deck } from "./cards.js";
+import { Card, Deck } from "./cards.js";
 import { getPlayerHandRank } from "./hands.js";
 
 const deckElement = document.getElementById("deck");
@@ -11,23 +11,25 @@ class Game {
     this.players = players;
     this.communityCards = [];
     this.discardPile = [];
-    // this.communityCardSet = [
-    //   new Card("6", "heart"),
-    //   new Card("7", "club"),
-    //   new Card("8", "diamond"),
-    //   new Card("9", "diamond"),
-    //   new Card("9", "heart"),
-    // ];
+    this.communityCardSet = [
+      new Card("6", "heart"),
+      new Card("7", "club"),
+      new Card("8", "diamond"),
+      new Card("9", "diamond"),
+      new Card("9", "heart"),
+    ];
 
-    // this.initialiseCommunityCards();
+    if (this.communityCardSet.length > 0) {
+      this.initialiseCommunityCards();
+    }
   }
 
-  // initialiseCommunityCards() {
-  //   // Remove community cards from the deck
-  //   this.communityCardSet.forEach((card) => {
-  //     this.deck.removeCardsFromDeck(card.value, card.suit);
-  //   });
-  // }
+  initialiseCommunityCards() {
+    // Remove community cards from the deck
+    this.communityCardSet.forEach((card) => {
+      this.deck.removeCardsFromDeck(card.value, card.suit);
+    });
+  }
 
   startGame() {
     this.deck.shuffleDeck();
@@ -81,11 +83,14 @@ class Game {
     // Burn one card, reveal flop cards
     this.discardPile.push(this.deck.drawCard());
     discardElement.classList.remove("card--outline");
-    for (let i = 0; i < 3; i++) {
-      this.communityCards.push(this.deck.drawCard());
-    }
 
-    // this.communityCards.push(...this.communityCardSet.slice(0, 3));
+    if (this.communityCardSet.length > 0) {
+      this.communityCards.push(...this.communityCardSet.slice(0, 3));
+    } else {
+      for (let i = 0; i < 3; i++) {
+        this.communityCards.push(this.deck.drawCard());
+      }
+    }
 
     this.communityCards.forEach((card, i) => {
       const cardElement = document.getElementById(
@@ -113,11 +118,16 @@ class Game {
   dealTurn() {
     // Burn one card, reveal turn card
     this.discardPile.push(this.deck.drawCard());
-    const turnCard = this.deck.drawCard();
-    this.communityCards.push(turnCard);
 
-    // const turnCard = this.communityCardSet[3];
-    // this.communityCards.push(turnCard);
+    let turnCard;
+
+    if (this.communityCardSet.length > 0) {
+      turnCard = this.communityCardSet[3];
+    } else {
+      turnCard = this.deck.drawCard();
+    }
+
+    this.communityCards.push(turnCard);
 
     const cardElement = document.getElementById("community-card-turn");
     cardElement.classList.remove("card--outline");
@@ -141,11 +151,16 @@ class Game {
   dealRiver() {
     // Burn one card, reveal river card
     this.discardPile.push(this.deck.drawCard());
-    const riverCard = this.deck.drawCard();
-    this.communityCards.push(riverCard);
 
-    // const riverCard = this.communityCardSet[4];
-    // this.communityCards.push(riverCard);
+    let riverCard;
+
+    if (this.communityCardSet.length > 0) {
+      riverCard = this.communityCardSet[4];
+    } else {
+      riverCard = this.deck.drawCard();
+    }
+
+    this.communityCards.push(riverCard);
 
     const cardElement = document.getElementById("community-card-river");
     cardElement.classList.remove("card--outline");
