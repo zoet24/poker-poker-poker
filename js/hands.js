@@ -538,10 +538,6 @@ export function getPlayerHandRank(player, communityCards) {
     if (bestHand.rankName === "Royal Flush") break;
   }
 
-  if (bestHand) {
-    console.log(`Hand is a ${bestHand.rankName}`);
-  }
-
   return {
     rankName: bestHand.rankName,
     rank: bestHand.rank,

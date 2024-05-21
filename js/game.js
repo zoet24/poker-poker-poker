@@ -4,6 +4,7 @@ import { getPlayerHandRank } from "./hands.js";
 
 const deckElement = document.getElementById("deck");
 const discardElement = document.getElementById("discard");
+const playerListContainer = document.getElementById("player-list-container");
 
 class Game {
   constructor() {
@@ -12,16 +13,18 @@ class Game {
     this.communityCards = [];
     this.discardPile = [];
     this.communityCardSet = [
-      new Card("6", "heart"),
-      new Card("7", "club"),
-      new Card("8", "diamond"),
-      new Card("9", "diamond"),
-      new Card("9", "heart"),
+      new Card("2", "heart"),
+      new Card("2", "club"),
+      new Card("2", "diamond"),
+      new Card("4", "spade"),
+      new Card("3", "heart"),
     ];
 
     if (this.communityCardSet.length > 0) {
       this.initialiseCommunityCards();
     }
+
+    this.attachEventListeners();
   }
 
   initialiseCommunityCards() {
@@ -180,9 +183,6 @@ class Game {
     this.deck = new Deck();
 
     // Reset the UI
-    const playerListContainer = document.getElementById(
-      "player-list-container"
-    );
     playerListContainer.innerHTML = "";
 
     const cards = document.querySelectorAll(".card");
@@ -201,45 +201,27 @@ class Game {
     deckElement.textContent = "Deck";
     discardElement.textContent = "Discard";
   }
+
+  attachEventListeners() {
+    document
+      .getElementById("startGameBtn")
+      .addEventListener("click", () => this.startGame());
+    document
+      .getElementById("dealPlayerCardsBtn")
+      .addEventListener("click", () => this.dealPlayerCards());
+    document
+      .getElementById("dealFlopBtn")
+      .addEventListener("click", () => this.dealFlop());
+    document
+      .getElementById("dealTurnBtn")
+      .addEventListener("click", () => this.dealTurn());
+    document
+      .getElementById("dealRiverBtn")
+      .addEventListener("click", () => this.dealRiver());
+    document
+      .getElementById("resetGameBtn")
+      .addEventListener("click", () => this.resetGame());
+  }
 }
 
 const game = new Game();
-
-const startGameBtn = document.getElementById("startGameBtn");
-const dealPlayerCardsBtn = document.getElementById("dealPlayerCardsBtn");
-const dealFlopBtn = document.getElementById("dealFlopBtn");
-const dealTurnBtn = document.getElementById("dealTurnBtn");
-const dealRiverBtn = document.getElementById("dealRiverBtn");
-const resetGameBtn = document.getElementById("resetGameBtn");
-
-// Attach event listeners
-startGameBtn.addEventListener("click", startGame);
-dealPlayerCardsBtn.addEventListener("click", dealPlayerCards);
-dealFlopBtn.addEventListener("click", dealFlop);
-dealTurnBtn.addEventListener("click", dealTurn);
-dealRiverBtn.addEventListener("click", dealRiver);
-resetGameBtn.addEventListener("click", resetGame);
-
-function startGame() {
-  game.startGame();
-}
-
-function dealPlayerCards() {
-  game.dealPlayerCards();
-}
-
-function dealFlop() {
-  game.dealFlop();
-}
-
-function dealTurn() {
-  game.dealTurn();
-}
-
-function dealRiver() {
-  game.dealRiver();
-}
-
-function resetGame() {
-  game.resetGame();
-}

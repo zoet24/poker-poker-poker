@@ -95,3 +95,21 @@ export class Deck {
     );
   }
 }
+
+// Function to toggle showCards property and update card visibility
+export const toggleShowCards = (player, playerCards) => {
+  player.showCards = !player.showCards;
+  updatePlayerCards(player, playerCards);
+};
+
+// Function to update the player's card display based on the showCards property
+export const updatePlayerCards = (player, playerCards) => {
+  const cards = playerCards.querySelectorAll(".card");
+  cards.forEach((card) => {
+    if (player.showCards) {
+      card.classList.remove("card--hidden");
+    } else {
+      card.classList.add("card--hidden");
+    }
+  });
+};
