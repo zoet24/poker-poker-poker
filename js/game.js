@@ -36,12 +36,6 @@ class Game {
     deckElement.classList.remove("card--outline");
 
     deckElement.textContent = "Deck (" + this.deck.cards.length + ")";
-    console.log("Initial deck:", this.deck);
-    console.log("Initial players:", this.players);
-    console.log("Initial community cards:", this.communityCards);
-    console.log("Initial discard pile:", this.discardPile);
-
-    console.log(this.deck);
   }
 
   dealPlayerCards() {
@@ -73,113 +67,55 @@ class Game {
     });
 
     deckElement.textContent = "Deck (" + this.deck.cards.length + ")";
-    console.log("dealPlayerCards deck:", this.deck);
-    console.log("dealPlayerCards players:", this.players);
-    console.log("dealPlayerCards community cards:", this.communityCards);
-    console.log("dealPlayerCards discard pile:", this.discardPile);
+  }
+
+  dealCommunityCard(cardIndex, elementId) {
+    let communityCard;
+
+    if (this.communityCardSet.length > 0) {
+      communityCard = this.communityCardSet[cardIndex];
+    } else {
+      communityCard = this.deck.drawCard();
+    }
+
+    this.communityCards.push(communityCard);
+
+    const cardElement = document.getElementById(elementId);
+    cardElement.classList.remove("card--outline");
+
+    if (communityCard.getSuitColour() === "red") {
+      cardElement.classList.add("card--red");
+    }
+
+    const cardValue = communityCard.getDisplayValue();
+    const suitSymbol = communityCard.getSuitSymbol();
+    cardElement.textContent = cardValue + suitSymbol;
+
+    deckElement.textContent = "Deck (" + this.deck.cards.length + ")";
+    discardElement.textContent = "Discard (" + this.discardPile.length + ")";
   }
 
   dealFlop() {
-    // Burn one card, reveal flop cards
     this.discardPile.push(this.deck.drawCard());
     discardElement.classList.remove("card--outline");
 
-    if (this.communityCardSet.length > 0) {
-      this.communityCards.push(...this.communityCardSet.slice(0, 3));
-    } else {
-      for (let i = 0; i < 3; i++) {
-        this.communityCards.push(this.deck.drawCard());
-      }
+    for (let i = 0; i < 3; i++) {
+      this.dealCommunityCard(i, `community-card-flop${i + 1}`);
     }
-
-    this.communityCards.forEach((card, i) => {
-      const cardElement = document.getElementById(
-        `community-card-flop${i + 1}`
-      );
-      cardElement.classList.remove("card--outline");
-
-      if (card.getSuitColour() === "red") {
-        cardElement.classList.add("card--red");
-      }
-
-      const cardValue = card.getDisplayValue();
-      const suitSymbol = card.getSuitSymbol();
-      cardElement.textContent = cardValue + suitSymbol;
-    });
-
-    deckElement.textContent = "Deck (" + this.deck.cards.length + ")";
-    discardElement.textContent = "Discard (" + this.discardPile.length + ")";
-    console.log("dealFlop deck:", this.deck);
-    console.log("dealFlop players:", this.players);
-    console.log("dealFlop community cards:", this.communityCards);
-    console.log("dealFlop discard pile:", this.discardPile);
   }
 
   dealTurn() {
-    // Burn one card, reveal turn card
     this.discardPile.push(this.deck.drawCard());
-
-    let turnCard;
-
-    if (this.communityCardSet.length > 0) {
-      turnCard = this.communityCardSet[3];
-    } else {
-      turnCard = this.deck.drawCard();
-    }
-
-    this.communityCards.push(turnCard);
-
-    const cardElement = document.getElementById("community-card-turn");
-    cardElement.classList.remove("card--outline");
-
-    if (turnCard.getSuitColour() === "red") {
-      cardElement.classList.add("card--red");
-    }
-
-    const cardValue = turnCard.getDisplayValue();
-    const suitSymbol = turnCard.getSuitSymbol();
-    cardElement.textContent = cardValue + suitSymbol;
-
-    deckElement.textContent = "Deck (" + this.deck.cards.length + ")";
-    discardElement.textContent = "Discard (" + this.discardPile.length + ")";
-    console.log("dealTurn deck:", this.deck);
-    console.log("dealTurn players:", this.players);
-    console.log("dealTurn community cards:", this.communityCards);
-    console.log("dealTurn discard pile:", this.discardPile);
+    this.dealCommunityCard(3, "community-card-turn");
   }
 
   dealRiver() {
-    // Burn one card, reveal river card
     this.discardPile.push(this.deck.drawCard());
+    this.dealCommunityCard(4, "community-card-river");
+    this.generateResults();
+  }
 
-    let riverCard;
-
-    if (this.communityCardSet.length > 0) {
-      riverCard = this.communityCardSet[4];
-    } else {
-      riverCard = this.deck.drawCard();
-    }
-
-    this.communityCards.push(riverCard);
-
-    const cardElement = document.getElementById("community-card-river");
-    cardElement.classList.remove("card--outline");
-
-    if (riverCard.getSuitColour() === "red") {
-      cardElement.classList.add("card--red");
-    }
-
-    const cardValue = riverCard.getDisplayValue();
-    const suitSymbol = riverCard.getSuitSymbol();
-    cardElement.textContent = cardValue + suitSymbol;
-
-    deckElement.textContent = "Deck (" + this.deck.cards.length + ")";
-    discardElement.textContent = "Discard (" + this.discardPile.length + ")";
-    console.log("dealRiver deck:", this.deck);
-    console.log("dealRiver players:", this.players);
-    console.log("dealRiver community cards:", this.communityCards);
-    console.log("dealRiver discard pile:", this.discardPile);
-
+  generateResults() {
     let results = [];
 
     this.players.forEach((player) => {
@@ -244,6 +180,11 @@ class Game {
     this.deck = new Deck();
 
     // Reset the UI
+    const playerListContainer = document.getElementById(
+      "player-list-container"
+    );
+    playerListContainer.innerHTML = "";
+
     const cards = document.querySelectorAll(".card");
 
     // Iterate over each card element
@@ -259,10 +200,6 @@ class Game {
 
     deckElement.textContent = "Deck";
     discardElement.textContent = "Discard";
-    console.log("reset deck:", this.deck);
-    console.log("reset players:", this.players);
-    console.log("reset community cards:", this.communityCards);
-    console.log("reset discard pile:", this.discardPile);
   }
 }
 
