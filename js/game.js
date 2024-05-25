@@ -1,23 +1,30 @@
 import { players } from "./players.js";
 import { Card, Deck } from "./cards.js";
 import { getPlayerHandRank } from "./hands.js";
+import {
+  createProbabilityTable,
+  updateProbabilityTable,
+  calculatePostDealProbabilities,
+} from "./probs.js";
 
 const deckElement = document.getElementById("deck");
 const discardElement = document.getElementById("discard");
 const playerListContainer = document.getElementById("player-list-container");
+const probabilityTableId = "probabilityTable";
 
 class Game {
   constructor() {
     this.deck = new Deck();
     this.players = players;
+    this.stage = "start";
     this.communityCards = [];
     this.discardPile = [];
     this.communityCardSet = [
+      new Card("14", "heart"),
       new Card("2", "heart"),
-      new Card("2", "club"),
-      new Card("2", "diamond"),
-      new Card("4", "spade"),
       new Card("3", "heart"),
+      new Card("4", "heart"),
+      new Card("5", "heart"),
     ];
 
     if (this.communityCardSet.length > 0) {
@@ -39,6 +46,10 @@ class Game {
     deckElement.classList.remove("card--outline");
 
     deckElement.textContent = "Deck (" + this.deck.cards.length + ")";
+
+    // Create and update the probability table
+    createProbabilityTable(probabilityTableId);
+    updateProbabilityTable();
   }
 
   dealPlayerCards() {
@@ -67,9 +78,21 @@ class Game {
           cardElement.classList.add("card--hidden");
         }
       });
+
+      // Calculate and update probabilities after dealing the hands
+      const probabilities = calculatePostDealProbabilities(this.deck, player);
+      const table = document.getElementById(probabilityTableId);
+      const row = table.rows[players.indexOf(player) + 1];
+      row.cells[1].textContent = `${probabilities.royalFlushProb.toFixed(6)}%`;
+      row.cells[2].textContent = `${probabilities.straightFlushProb.toFixed(
+        6
+      )}%`;
+      row.cells[3].textContent = `${probabilities.fourOfAKindProb.toFixed(6)}%`;
     });
 
     deckElement.textContent = "Deck (" + this.deck.cards.length + ")";
+
+    this.stage = "deal";
   }
 
   dealCommunityCard(cardIndex, elementId) {
@@ -105,17 +128,23 @@ class Game {
     for (let i = 0; i < 3; i++) {
       this.dealCommunityCard(i, `community-card-flop${i + 1}`);
     }
+
+    this.stage = "flop";
   }
 
   dealTurn() {
     this.discardPile.push(this.deck.drawCard());
     this.dealCommunityCard(3, "community-card-turn");
+
+    this.stage = "turn";
   }
 
   dealRiver() {
     this.discardPile.push(this.deck.drawCard());
     this.dealCommunityCard(4, "community-card-river");
     this.generateResults();
+
+    this.stage = "river";
   }
 
   generateResults() {
@@ -200,6 +229,8 @@ class Game {
 
     deckElement.textContent = "Deck";
     discardElement.textContent = "Discard";
+
+    this.stage = "start";
   }
 
   attachEventListeners() {

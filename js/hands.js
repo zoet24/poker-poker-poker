@@ -79,6 +79,7 @@ const getStraightFlushRank = (cards) => {
 };
 
 // Four of a kind: 700 - 800
+// Edge case: highest possible 4 of a kind AAAAK ~ 805, but is still less than lowest possible straight flush A2345 ~ 835
 const getFourOfAKindRank = (cards) => {
   const valueCount = {};
   cards.forEach((card) => {

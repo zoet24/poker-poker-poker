@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 .table {
   @apply relative border-black border-2 rounded-full;
 
@@ -60,6 +59,30 @@
   @apply mt-5;
 }
 
-button {
-  @apply border rounded-sm p-2;
+body {
+  button {
+    @apply border rounded-sm p-2;
+  }
+
+  ul {
+    li {
+      @apply border-b;
+    }
+  }
+
+  table {
+    @apply m-4 border;
+
+    tr {
+      @apply border-b;
+
+      th {
+        @apply border-r p-1;
+      }
+
+      td {
+        @apply border-r p-1;
+      }
+    }
+  }
 }

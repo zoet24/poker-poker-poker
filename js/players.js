@@ -10,12 +10,12 @@ class Player {
 const players = [
   new Player("Zoe"),
   new Player("Mike"),
-  new Player("Fran"),
-  new Player("Bron"),
-  new Player("Char"),
-  new Player("Mushy Peas"),
-  new Player("Saz"),
-  new Player("Bella"),
+  // new Player("Fran"),
+  // new Player("Bron"),
+  // new Player("Char"),
+  // new Player("Mushy Peas"),
+  // new Player("Guy"),
+  // new Player("Alex"),
 ];
 
 export { players };

@@ -46,8 +46,23 @@
   @apply mt-5;
 }
 
-button {
+body button {
   @apply border rounded-sm p-2;
+}
+body ul li {
+  @apply border-b;
+}
+body table {
+  @apply m-4 border;
+}
+body table tr {
+  @apply border-b;
+}
+body table tr th {
+  @apply border-r p-1;
+}
+body table tr td {
+  @apply border-r p-1;
 }
 
 /*# sourceMappingURL=styles.css.map */

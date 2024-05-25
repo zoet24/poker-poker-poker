@@ -636,6 +636,9 @@ video {
 .m-1 {
   margin: 0.25rem;
 }
+.m-4 {
+  margin: 1rem;
+}
 .mt-2 {
   margin-top: 0.5rem;
 }
@@ -2030,10 +2033,28 @@ video {
   margin-top: 1.25rem;
 }
 
-button {
+body button {
   border-radius: 0.125rem;
   border-width: 1px;
   padding: 0.5rem;
+}
+body ul li {
+  border-bottom-width: 1px;
+}
+body table {
+  margin: 1rem;
+  border-width: 1px;
+}
+body table tr {
+  border-bottom-width: 1px;
+}
+body table tr th {
+  border-right-width: 1px;
+  padding: 0.25rem;
+}
+body table tr td {
+  border-right-width: 1px;
+  padding: 0.25rem;
 }
 
 @media (min-width: 640px) {
