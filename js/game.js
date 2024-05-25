@@ -15,11 +15,11 @@ class Game {
     this.communityCards = [];
     this.discardPile = [];
     this.communityCardSet = [
-      new Card("14", "heart"),
-      new Card("2", "heart"),
-      new Card("3", "heart"),
-      new Card("4", "heart"),
-      new Card("5", "heart"),
+      // new Card("14", "heart"),
+      // new Card("2", "heart"),
+      // new Card("3", "heart"),
+      // new Card("4", "heart"),
+      // new Card("5", "heart"),
     ];
 
     if (this.communityCardSet.length > 0) {
@@ -44,7 +44,11 @@ class Game {
 
     // Create and update the probability table
     createProbabilityTable(probabilityTableId);
-    updateProbabilityTable();
+    updateProbabilityTable(
+      "pre-deal",
+      this.communityCards,
+      this.deck.cards.length
+    );
   }
 
   dealPlayerCards() {
@@ -76,6 +80,8 @@ class Game {
     });
 
     deckElement.textContent = "Deck (" + this.deck.cards.length + ")";
+
+    updateProbabilityTable("deal", this.communityCards, this.deck.cards.length);
   }
 
   dealCommunityCard(cardIndex, elementId) {
@@ -111,16 +117,27 @@ class Game {
     for (let i = 0; i < 3; i++) {
       this.dealCommunityCard(i, `community-card-flop${i + 1}`);
     }
+
+    updateProbabilityTable("flop", this.communityCards, this.deck.cards.length);
   }
 
   dealTurn() {
     this.discardPile.push(this.deck.drawCard());
     this.dealCommunityCard(3, "community-card-turn");
+
+    updateProbabilityTable("turn", this.communityCards, this.deck.cards.length);
   }
 
   dealRiver() {
     this.discardPile.push(this.deck.drawCard());
     this.dealCommunityCard(4, "community-card-river");
+
+    updateProbabilityTable(
+      "river",
+      this.communityCards,
+      this.deck.cards.length
+    );
+
     this.generateResults();
   }
 
