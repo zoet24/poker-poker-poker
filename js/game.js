@@ -1,7 +1,10 @@
 import { players } from "./players.js";
 import { Card, Deck } from "./cards.js";
 import { getPlayerHandRank } from "./hands.js";
-import { createProbabilityTable, updateProbabilityTable } from "./probs.js";
+import {
+  createProbabilityTable,
+  updateProbabilityTable,
+} from "./probabilities/probabilities.js";
 
 const deckElement = document.getElementById("deck");
 const discardElement = document.getElementById("discard");
