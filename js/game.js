@@ -15,11 +15,11 @@ class Game {
     this.communityCards = [];
     this.discardPile = [];
     this.communityCardSet = [
-      // new Card("14", "heart"),
-      // new Card("2", "heart"),
-      // new Card("3", "heart"),
-      // new Card("4", "heart"),
-      // new Card("5", "heart"),
+      new Card("10", "spade"),
+      new Card("11", "spade"),
+      new Card("12", "heart"),
+      new Card("13", "heart"),
+      new Card("14", "heart"),
     ];
 
     if (this.communityCardSet.length > 0) {

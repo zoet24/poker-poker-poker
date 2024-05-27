@@ -1,4 +1,5 @@
 import { players } from "./players.js";
+import { Card, Deck } from "./cards.js";
 
 export const createProbabilityTable = (tableId) => {
   const table = document.getElementById(tableId);
@@ -33,34 +34,14 @@ export const createProbabilityTable = (tableId) => {
   });
 };
 
-// Calculate probabilities before any cards are dealt
 export const updateProbabilityTable = (stage, communityCards, deckSize) => {
   const probabilities = calculateProbabilities(stage, communityCards, deckSize);
   const table = document.getElementById("probabilityTable");
 
   players.forEach((player, index) => {
     const row = table.rows[index + 1]; // +1 to skip header row
-    row.cells[1].textContent = `${probabilities[
-      player.name
-    ].royalFlushProb.toFixed(6)}%`;
+    row.cells[1].textContent = `${probabilities.royalFlushProb.toFixed(6)}%`;
   });
-};
-
-// Calculate probabilities based on the game stage and current community cards
-const calculateProbabilities = (stage, communityCards, deckSize) => {
-  const probabilities = {};
-
-  console.log(stage, communityCards, deckSize);
-
-  players.forEach((player) => {
-    const playerProbabilities = {
-      royalFlushProb: calculateRoyalFlushProb(stage, deckSize),
-    };
-
-    probabilities[player.name] = playerProbabilities;
-  });
-
-  return probabilities;
 };
 
 // Helper function to calculate factorial
@@ -80,15 +61,114 @@ const combinatorial = (n, r) => {
   return factorial(n) / (factorial(r) * factorial(n - r));
 };
 
-// Calculate the probability of a Royal Flush pre-deal
-const calculateRoyalFlushProb = (stage, deckSize) => {
-  if (stage !== "pre-deal") return 0;
+const calculateProbabilities = (stage, communityCards, deckSize) => {
+  const playerHand = [new Card("9", "spade"), new Card("8", "spade")];
+  const deck = new Deck();
 
-  const numberOfRoyalFlushes = 4; // One for each suit
-  const totalHands = combinatorial(deckSize, 5);
+  if (stage === "pre-deal") {
+    return calculatePredealProbs();
+  } else if (stage === "deal") {
+    return calculatePostDealProbs(playerHand, deck);
+  } else if (stage === "flop") {
+    return {
+      royalFlushProb: 0,
+    };
+  } else if (stage === "turn") {
+    return {
+      royalFlushProb: 0,
+    };
+  } else {
+    return {
+      royalFlushProb: 0,
+    };
+  }
+};
 
-  const probability = (numberOfRoyalFlushes / totalHands) * 100;
-  console.log("Pre-deal Probability of Royal Flush:", probability);
+const calculatePredealProbs = () => {
+  const remainingDeckSize = 52;
 
-  return probability;
+  // Total number of possible 7-card hands from a deck of 52 cards
+  const totalHands = combinatorial(52, 7);
+
+  // Number of ways to get a Royal Flush
+  // There are 4 suits, and each suit has exactly one Royal Flush combination (10, J, Q, K, A of the same suit)
+  const royalFlushesPerSuit = combinatorial(47, 2); // The remaining two cards can be any of the 47 other cards
+  const royalFlushes = 4 * royalFlushesPerSuit; // 4 suits
+
+  // Probability of getting a Royal Flush
+  const royalFlushProb = (royalFlushes / totalHands) * 100;
+
+  console.log("Total 7-card hands:", totalHands);
+  console.log("Number of Royal Flush combinations:", royalFlushes);
+  console.log("Probability of Royal Flush pre-deal:", royalFlushProb);
+
+  return {
+    royalFlushProb,
+  };
+};
+
+// Function to check if a set of 7 cards contains a Royal Flush
+const containsRoyalFlush = (cards) => {
+  const suits = ["heart", "diamond", "club", "spade"];
+  const royalFlushRanks = ["10", "11", "12", "13", "14"];
+
+  for (const suit of suits) {
+    const suitCards = cards.filter((card) => card.suit === suit);
+    const suitCardValues = suitCards.map((card) => card.value);
+
+    if (royalFlushRanks.every((rank) => suitCardValues.includes(rank))) {
+      return true;
+    }
+  }
+  return false;
+};
+
+// Function to generate all combinations of a specific length from an array
+const generateCombinations = (array, length) => {
+  const result = [];
+  const combine = (start, prefix) => {
+    if (prefix.length === length) {
+      result.push(prefix);
+      return;
+    }
+    for (let i = start; i < array.length; i++) {
+      combine(i + 1, prefix.concat(array[i]));
+    }
+  };
+  combine(0, []);
+  return result;
+};
+
+// Function to calculate the probability of getting a Royal Flush post-deal
+const calculatePostDealProbs = (playerHand, deck) => {
+  const remainingDeck = deck.cards.filter(
+    (card) =>
+      !playerHand.some(
+        (playerCard) =>
+          playerCard.value === card.value && playerCard.suit === card.suit
+      )
+  );
+
+  const totalHands = combinatorial(remainingDeck.length, 5);
+  const possibleCommunityHands = generateCombinations(remainingDeck, 5);
+
+  let possibleRoyalFlushes = 0;
+
+  for (const communityCards of possibleCommunityHands) {
+    const combinedHand = [...playerHand, ...communityCards];
+    if (containsRoyalFlush(combinedHand)) {
+      possibleRoyalFlushes++;
+    }
+  }
+
+  const royalFlushProb = (possibleRoyalFlushes / totalHands) * 100;
+
+  console.log("Player hand:", playerHand);
+  console.log("Total 5-card hands from remaining deck:", totalHands);
+  console.log("Number of Royal Flush combinations:", possibleRoyalFlushes);
+  console.log("Probability of Royal Flush post-deal:", royalFlushProb);
+
+  return {
+    royalFlushProb,
+  };
 };
