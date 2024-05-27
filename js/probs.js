@@ -34,11 +34,15 @@ export const createProbabilityTable = (tableId) => {
   });
 };
 
-export const updateProbabilityTable = (stage, communityCards, deckSize) => {
-  const probabilities = calculateProbabilities(stage, communityCards, deckSize);
+export const updateProbabilityTable = (stage, communityCards) => {
   const table = document.getElementById("probabilityTable");
 
   players.forEach((player, index) => {
+    const probabilities = calculateProbabilities(
+      stage,
+      player.hand,
+      communityCards
+    );
     const row = table.rows[index + 1]; // +1 to skip header row
     row.cells[1].textContent = `${probabilities.royalFlushProb.toFixed(6)}%`;
   });
@@ -61,8 +65,39 @@ const combinatorial = (n, r) => {
   return factorial(n) / (factorial(r) * factorial(n - r));
 };
 
-const calculateProbabilities = (stage, communityCards, deckSize) => {
-  const playerHand = [new Card("9", "spade"), new Card("8", "spade")];
+// Function to generate all combinations of a specific length from an array
+const generateCombinations = (array, length) => {
+  const result = [];
+  const combine = (start, prefix) => {
+    if (prefix.length === length) {
+      result.push(prefix);
+      return;
+    }
+    for (let i = start; i < array.length; i++) {
+      combine(i + 1, prefix.concat(array[i]));
+    }
+  };
+  combine(0, []);
+  return result;
+};
+
+// Function to check if a set of 7 cards contains a Royal Flush
+const containsRoyalFlush = (cards) => {
+  const suits = Card.suits;
+  const royalFlushRanks = ["10", "11", "12", "13", "14"];
+
+  for (const suit of suits) {
+    const suitCards = cards.filter((card) => card.suit === suit);
+    const suitCardValues = suitCards.map((card) => card.value);
+
+    if (royalFlushRanks.every((rank) => suitCardValues.includes(rank))) {
+      return true;
+    }
+  }
+  return false;
+};
+
+const calculateProbabilities = (stage, playerHand, communityCards) => {
   const deck = new Deck();
 
   if (stage === "pre-deal") {
@@ -103,38 +138,6 @@ const calculatePredealProbs = () => {
   };
 };
 
-// Function to check if a set of 7 cards contains a Royal Flush
-const containsRoyalFlush = (cards) => {
-  const suits = ["heart", "diamond", "club", "spade"];
-  const royalFlushRanks = ["10", "11", "12", "13", "14"];
-
-  for (const suit of suits) {
-    const suitCards = cards.filter((card) => card.suit === suit);
-    const suitCardValues = suitCards.map((card) => card.value);
-
-    if (royalFlushRanks.every((rank) => suitCardValues.includes(rank))) {
-      return true;
-    }
-  }
-  return false;
-};
-
-// Function to generate all combinations of a specific length from an array
-const generateCombinations = (array, length) => {
-  const result = [];
-  const combine = (start, prefix) => {
-    if (prefix.length === length) {
-      result.push(prefix);
-      return;
-    }
-    for (let i = start; i < array.length; i++) {
-      combine(i + 1, prefix.concat(array[i]));
-    }
-  };
-  combine(0, []);
-  return result;
-};
-
 // Function to calculate the probability of getting a Royal Flush post-deal
 const calculatePostDealProbs = (playerHand, deck) => {
   const remainingDeck = deck.cards.filter(
@@ -156,12 +159,15 @@ const calculatePostDealProbs = (playerHand, deck) => {
       possibleRoyalFlushes++;
     }
   }
-
-  const royalFlushProb = (possibleRoyalFlushes / totalHands) * 100;
+  const royalFlushProb =
+    ((possibleRoyalFlushes * factorial(5)) / totalHands) * 100;
 
   console.log("Player hand:", playerHand);
   console.log("Total 5-card hands from remaining deck:", totalHands);
-  console.log("Number of Royal Flush combinations:", possibleRoyalFlushes);
+  console.log(
+    "Number of Royal Flush combinations:",
+    possibleRoyalFlushes * factorial(5)
+  );
   console.log("Probability of Royal Flush post-deal:", royalFlushProb);
 
   return {
@@ -195,12 +201,16 @@ const calculateFlopProbs = (playerHand, communityCards, deck) => {
     }
   }
 
-  const royalFlushProb = (possibleRoyalFlushes / totalHands) * 100;
+  const royalFlushProb =
+    ((possibleRoyalFlushes * factorial(2)) / totalHands) * 100;
 
   console.log("Player hand:", playerHand);
   console.log("Community cards:", communityCards);
   console.log("Total 2-card hands from remaining deck:", totalHands);
-  console.log("Number of Royal Flush combinations:", possibleRoyalFlushes);
+  console.log(
+    "Number of Royal Flush combinations:",
+    possibleRoyalFlushes * factorial(2)
+  );
   console.log("Probability of Royal Flush after flop:", royalFlushProb);
 
   return {

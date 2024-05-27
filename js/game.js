@@ -44,11 +44,7 @@ class Game {
 
     // Create and update the probability table
     createProbabilityTable(probabilityTableId);
-    updateProbabilityTable(
-      "pre-deal",
-      this.communityCards,
-      this.deck.cards.length
-    );
+    updateProbabilityTable("pre-deal", []);
   }
 
   dealPlayerCards() {
@@ -81,7 +77,7 @@ class Game {
 
     deckElement.textContent = "Deck (" + this.deck.cards.length + ")";
 
-    updateProbabilityTable("deal", this.communityCards, this.deck.cards.length);
+    updateProbabilityTable("deal", []);
   }
 
   dealCommunityCard(cardIndex, elementId) {
@@ -118,25 +114,19 @@ class Game {
       this.dealCommunityCard(i, `community-card-flop${i + 1}`);
     }
 
-    updateProbabilityTable("flop", this.communityCards, this.deck.cards.length);
+    updateProbabilityTable("flop", this.communityCards);
   }
 
   dealTurn() {
     this.discardPile.push(this.deck.drawCard());
     this.dealCommunityCard(3, "community-card-turn");
 
-    updateProbabilityTable("turn", this.communityCards, this.deck.cards.length);
+    updateProbabilityTable("turn", this.communityCards);
   }
 
   dealRiver() {
     this.discardPile.push(this.deck.drawCard());
     this.dealCommunityCard(4, "community-card-river");
-
-    updateProbabilityTable(
-      "river",
-      this.communityCards,
-      this.deck.cards.length
-    );
 
     this.generateResults();
   }
@@ -206,6 +196,7 @@ class Game {
     this.deck = new Deck();
 
     // Reset the UI
+    document.getElementById("probabilityTable").innerHTML = "";
     playerListContainer.innerHTML = "";
 
     const cards = document.querySelectorAll(".card");

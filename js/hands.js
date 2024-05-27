@@ -1,7 +1,7 @@
 import { Card } from "./cards.js";
 
 // Royal flush: 900
-const isRoyalFlush = (cards) => {
+export const isRoyalFlush = (cards) => {
   const royalValues = ["10", "11", "12", "13", "14"];
   const suits = new Set(cards.map((card) => card.suit));
   const values = cards
