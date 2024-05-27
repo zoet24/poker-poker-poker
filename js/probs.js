@@ -70,13 +70,9 @@ const calculateProbabilities = (stage, communityCards, deckSize) => {
   } else if (stage === "deal") {
     return calculatePostDealProbs(playerHand, deck);
   } else if (stage === "flop") {
-    return {
-      royalFlushProb: 0,
-    };
+    return calculateFlopProbs(playerHand, communityCards, deck);
   } else if (stage === "turn") {
-    return {
-      royalFlushProb: 0,
-    };
+    return calculateTurnProbs(playerHand, communityCards, deck);
   } else {
     return {
       royalFlushProb: 0,
@@ -167,6 +163,84 @@ const calculatePostDealProbs = (playerHand, deck) => {
   console.log("Total 5-card hands from remaining deck:", totalHands);
   console.log("Number of Royal Flush combinations:", possibleRoyalFlushes);
   console.log("Probability of Royal Flush post-deal:", royalFlushProb);
+
+  return {
+    royalFlushProb,
+  };
+};
+
+// Function to calculate the probability of getting a Royal Flush after the flop
+const calculateFlopProbs = (playerHand, communityCards, deck) => {
+  const remainingDeck = deck.cards.filter(
+    (card) =>
+      !playerHand.some(
+        (playerCard) =>
+          playerCard.value === card.value && playerCard.suit === card.suit
+      ) &&
+      !communityCards.some(
+        (communityCard) =>
+          communityCard.value === card.value && communityCard.suit === card.suit
+      )
+  );
+
+  const totalHands = combinatorial(remainingDeck.length, 2); // 2 cards left to draw
+  const possibleTurnRiverHands = generateCombinations(remainingDeck, 2);
+
+  let possibleRoyalFlushes = 0;
+
+  for (const turnRiverCards of possibleTurnRiverHands) {
+    const combinedHand = [...playerHand, ...communityCards, ...turnRiverCards];
+    if (containsRoyalFlush(combinedHand)) {
+      possibleRoyalFlushes++;
+    }
+  }
+
+  const royalFlushProb = (possibleRoyalFlushes / totalHands) * 100;
+
+  console.log("Player hand:", playerHand);
+  console.log("Community cards:", communityCards);
+  console.log("Total 2-card hands from remaining deck:", totalHands);
+  console.log("Number of Royal Flush combinations:", possibleRoyalFlushes);
+  console.log("Probability of Royal Flush after flop:", royalFlushProb);
+
+  return {
+    royalFlushProb,
+  };
+};
+
+// Function to calculate the probability of getting a Royal Flush after the turn
+const calculateTurnProbs = (playerHand, communityCards, deck) => {
+  const remainingDeck = deck.cards.filter(
+    (card) =>
+      !playerHand.some(
+        (playerCard) =>
+          playerCard.value === card.value && playerCard.suit === card.suit
+      ) &&
+      !communityCards.some(
+        (communityCard) =>
+          communityCard.value === card.value && communityCard.suit === card.suit
+      )
+  );
+
+  const totalHands = remainingDeck.length; // 1 card left to draw (the river)
+  const possibleRiverHands = generateCombinations(remainingDeck, 1);
+
+  let possibleRoyalFlushes = 0;
+
+  for (const riverCard of possibleRiverHands) {
+    const combinedHand = [...playerHand, ...communityCards, ...riverCard];
+    if (containsRoyalFlush(combinedHand)) {
+      possibleRoyalFlushes++;
+    }
+  }
+
+  const royalFlushProb = (possibleRoyalFlushes / totalHands) * 100;
+
+  console.log("Player hand:", playerHand);
+  console.log("Community cards:", communityCards);
+  console.log("Total 1-card hands from remaining deck:", totalHands);
+  console.log("Number of Royal Flush combinations:", possibleRoyalFlushes);
+  console.log("Probability of Royal Flush after turn:", royalFlushProb);
 
   return {
     royalFlushProb,
