@@ -114,3 +114,65 @@ export const generateStraightFlushCombos = () => {
 
   return combos;
 };
+
+export const containsFourOfAKind = (cards) => {
+  const valueCount = {};
+
+  // Count occurrences of each card value
+  cards.forEach((card) => {
+    if (!valueCount[card.value]) {
+      valueCount[card.value] = 0;
+    }
+    valueCount[card.value]++;
+  });
+
+  // console.log("Value counts:", valueCount); // Debugging log
+
+  // Check if any value appears 4 times
+  const hasFourOfAKind = Object.values(valueCount).some((count) => count === 4);
+  // console.log("Contains Four of a Kind:", hasFourOfAKind); // Debugging log
+  return hasFourOfAKind;
+};
+
+// Generate all possible Four of a Kind combinations
+export const generateFourOfAKindCombos = () => {
+  const combos = [];
+  const suits = ["heart", "diamond", "club", "spade"];
+  const ranks = [
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+  ];
+
+  for (const rank of ranks) {
+    const fourOfAKindCards = suits.map((suit) => new Card(rank, suit));
+    const remainingCards = generateCombinations(
+      new Deck().cards.filter(
+        (card) =>
+          !fourOfAKindCards.some(
+            (fourOfAKindCard) =>
+              fourOfAKindCard.value === card.value &&
+              fourOfAKindCard.suit === card.suit
+          )
+      ),
+      3
+    );
+
+    for (const combo of remainingCards) {
+      combos.push([...fourOfAKindCards, ...combo]);
+    }
+  }
+
+  // console.log("Generated Four of a Kind Combos:", combos.length); // Debugging log
+  return combos;
+};

@@ -1,17 +1,20 @@
 import { combinatorial, generateCombinations } from "./helpers.js";
-import { containsRoyalFlush, containsStraightFlush } from "./hands.js";
+import {
+  containsRoyalFlush,
+  containsStraightFlush,
+  containsFourOfAKind,
+} from "./hands.js";
 
 export const calculateTurnProbs = (playerHand, communityCards, deck) => {
   const remainingDeck = deck.cards.filter(
     (card) =>
       !playerHand.some(
         (playerCard) =>
-          playerCard.value === card.value && playerCard.suit === playerCard.suit
+          playerCard.value === card.value && playerCard.suit === card.suit
       ) &&
       !communityCards.some(
         (communityCard) =>
-          communityCard.value === card.value &&
-          communityCard.suit === communityCard.suit
+          communityCard.value === card.value && communityCard.suit === card.suit
       )
   );
 
@@ -20,6 +23,7 @@ export const calculateTurnProbs = (playerHand, communityCards, deck) => {
 
   let possibleRoyalFlushes = 0;
   let possibleStraightFlushes = 0;
+  let possibleFourOfAKinds = 0;
 
   for (const riverCard of possibleRiverHands) {
     const combinedHand = [...playerHand, ...communityCards, ...riverCard];
@@ -29,10 +33,14 @@ export const calculateTurnProbs = (playerHand, communityCards, deck) => {
     if (containsStraightFlush(combinedHand)) {
       possibleStraightFlushes++;
     }
+    if (containsFourOfAKind(combinedHand)) {
+      possibleFourOfAKinds++;
+    }
   }
 
   const royalFlushProb = (possibleRoyalFlushes / totalHands) * 100;
   const straightFlushProb = (possibleStraightFlushes / totalHands) * 100;
+  const fourOfAKindProb = (possibleFourOfAKinds / totalHands) * 100;
 
   console.log("Player hand:", playerHand);
   console.log("Community cards:", communityCards);
@@ -48,5 +56,6 @@ export const calculateTurnProbs = (playerHand, communityCards, deck) => {
   return {
     royalFlushProb,
     straightFlushProb,
+    fourOfAKindProb,
   };
 };

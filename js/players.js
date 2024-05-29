@@ -9,7 +9,7 @@ class Player {
 // Hardcoded Players
 const players = [
   new Player("Zoe"),
-  new Player("Mike"),
+  // new Player("Mike"),
   // new Player("Fran"),
   // new Player("Bron"),
   // new Player("Char"),
