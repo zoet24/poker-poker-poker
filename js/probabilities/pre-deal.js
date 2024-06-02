@@ -16,8 +16,19 @@ export const calculatePreDealProbs = () => {
   const fourOfAKindCombos = 13 * combinatorial(48, 3); // 13 ranks, 3 remaining cards can be any of the remaining 48 cards
   const fourOfAKindProb = (fourOfAKindCombos / totalHands) * 100;
 
-  console.log("Number of Four of a Kind combinations:", fourOfAKindCombos);
-  console.log("Probability of Four of a Kind pre-deal:", fourOfAKindProb);
+  // Full House
+  const fullHouseCombos =
+    13 * combinatorial(4, 3) * 12 * combinatorial(4, 2) * combinatorial(47, 2); // 13 ranks for three of a kind, 4 suits choose 3, 12 ranks for pair, 4 suits choose 2, remaining 2 cards can be anything
+  const fullHouseProb = (fullHouseCombos / totalHands) * 100;
+
+  console.log(flushCombos, flushProb);
+
+  // Flush (excluding royal flush and straight flush)
+  const flushCombos =
+    13 * combinatorial(4, 3) * 12 * combinatorial(4, 2) * combinatorial(47, 2); // 13 ranks for three of a kind, 4 suits choose 3, 12 ranks for pair, 4 suits choose 2, remaining 2 cards can be anything
+  const flushProb = (flushCombos / totalHands) * 100;
+
+  console.log(flushCombos, flushProb);
 
   return {
     royalFlushProb,

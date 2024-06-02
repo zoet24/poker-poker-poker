@@ -21,7 +21,7 @@ class Game {
       new Card("10", "heart"),
       new Card("10", "spade"),
       new Card("10", "diamond"),
-      new Card("13", "heart"),
+      new Card("10", "club"),
       new Card("14", "heart"),
     ];
 

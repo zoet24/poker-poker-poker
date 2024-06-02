@@ -10,7 +10,13 @@ export const createProbabilityTable = (tableId) => {
 
   // Create table header
   const headerRow = document.createElement("tr");
-  const headers = ["Player", "Royal Flush", "Straight Flush", "Four of a Kind"];
+  const headers = [
+    "Player",
+    "Royal Flush",
+    "Straight Flush",
+    "Four of a Kind",
+    "Full House",
+  ];
   headers.forEach((header) => {
     const th = document.createElement("th");
     th.textContent = header;
@@ -28,11 +34,13 @@ export const createProbabilityTable = (tableId) => {
     row.appendChild(nameCell);
 
     // Probability cells
-    ["Royal Flush", "Straight Flush", "Four of a Kind"].forEach(() => {
-      const cell = document.createElement("td");
-      cell.textContent = "0%"; // Placeholder for probabilities
-      row.appendChild(cell);
-    });
+    ["Royal Flush", "Straight Flush", "Four of a Kind", "Full House"].forEach(
+      () => {
+        const cell = document.createElement("td");
+        cell.textContent = "0%"; // Placeholder for probabilities
+        row.appendChild(cell);
+      }
+    );
 
     table.appendChild(row);
   });
@@ -51,6 +59,7 @@ export const updateProbabilityTable = (stage, communityCards) => {
     row.cells[1].textContent = `${probabilities.royalFlushProb.toFixed(6)}%`;
     row.cells[2].textContent = `${probabilities.straightFlushProb.toFixed(6)}%`;
     row.cells[3].textContent = `${probabilities.fourOfAKindProb.toFixed(6)}%`;
+    // row.cells[4].textContent = `${probabilities.fullHouseProb.toFixed(6)}%`;
   });
 };
 
