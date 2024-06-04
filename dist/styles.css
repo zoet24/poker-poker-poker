@@ -1,23 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  font-family: "Roboto Slab", serif;
+
+  button {
+    @apply border border-black rounded-md p-2;
+
+    &:hover {
+      @apply underline;
+    }
+
+    &:disabled {
+      @apply text-gray-500 border-gray-500 bg-gray-100;
+
+      &:hover {
+        @apply no-underline;
+      }
+    }
+  }
+  ul li {
+    @apply border-b;
+  }
+  table {
+    @apply m-4 border;
+
+    tr {
+      @apply border-b;
+    }
+    tr th {
+      @apply border-r p-1;
+    }
+    tr td {
+      @apply border-r p-1;
+    }
+  }
+  input[type=number]::-webkit-inner-spin-button, 
+  input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none; 
+    margin: 0; 
+  }
+}
+
 .table {
-  @apply relative border-black border-2 rounded-full;
-  width: 600px;
-  height: 600px;
+  @apply relative border-black border rounded-full;
+  width: 550px;
+  height: 550px;
 }
 
 .player {
-  @apply absolute bg-gray-300 border-black border-2 rounded-full flex justify-center items-center text-center cursor-pointer;
-  width: 50px;
-  height: 50px;
+  @apply absolute bg-gray-300 border-black border rounded-full flex justify-center items-center text-center cursor-pointer;
+  width: 60px;
+  height: 60px;
 }
 .player--hidden {
   @apply border-dashed;
 }
 
 .card {
-  @apply bg-white border border-black font-bold m-1 flex justify-center items-center text-center;
+  @apply bg-white border border-black font-bold m-1 flex justify-center items-center text-center rounded-md;
   width: 40px;
   height: 60px;
 }
@@ -29,6 +73,10 @@
 }
 .card--outline {
   @apply border-dashed;
+}
+.card--rotated {
+  height: 40px;
+  width: 60px;
 }
 
 .cards--player {
@@ -43,26 +91,35 @@
 }
 
 .game-controls {
-  @apply mt-5;
+  @apply flex flex-col space-y-2;
 }
 
-body button {
-  @apply border rounded-sm p-2;
+.chips {
+  @apply flex space-x-2 m-4;
+
+  input {
+    @apply border border-black rounded-md w-10 text-center p-1;
+
+    &:focus-visible {
+      @apply outline-none;
+    }
+  }
 }
-body ul li {
-  @apply border-b;
+
+.chip-wrapper {
+  @apply flex flex-col items-center space-y-2;
 }
-body table {
-  @apply m-4 border;
-}
-body table tr {
-  @apply border-b;
-}
-body table tr th {
-  @apply border-r p-1;
-}
-body table tr td {
-  @apply border-r p-1;
+
+.chip {
+  @apply h-20 w-20 border border-black rounded-full flex justify-center items-center;
+
+  input {
+    @apply border-none w-1/2 h-1/2 rounded-full text-center;
+
+    &:focus-visible {
+      @apply outline-none;
+    }
+  }
 }
 
 /*# sourceMappingURL=styles.css.map */

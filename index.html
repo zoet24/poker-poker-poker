@@ -9,30 +9,32 @@
 </head>
 
 <body>
-  <div class="table" id="table">
-    <div class="cards--community">
-      <div class="card card--outline" id="deck">
-        Deck
-      </div>
-      <div class="flex">
-        <div class="card card--outline" id="community-card-flop1"></div>
-        <div class="card card--outline" id="community-card-flop2"></div>
-        <div class="card card--outline" id="community-card-flop3"></div>
-        <div class="card card--outline" id="community-card-turn"></div>
-        <div class="card card--outline" id="community-card-river"></div>
-      </div>
-      <div class="card card--outline" id="discard">
-        Discard
+  <div class="flex justify-center items-center gap-4 mt-4">
+    <div class="table" id="table">
+      <div class="cards--community">
+        <div class="card card--outline card--rotated text-sm" id="deck">
+          Deck
+        </div>
+        <div class="flex">
+          <div class="card card--outline" id="community-card-flop1"></div>
+          <div class="card card--outline" id="community-card-flop2"></div>
+          <div class="card card--outline" id="community-card-flop3"></div>
+          <div class="card card--outline" id="community-card-turn"></div>
+          <div class="card card--outline" id="community-card-river"></div>
+        </div>
+        <div class="card card--outline card--rotated text-sm" id="discard">
+          Burn
+        </div>
       </div>
     </div>
-  </div>
-  <div class="game-controls">
-    <button id="startGameBtn">Start Game</button>
-    <button id="dealPlayerCardsBtn">Deal Player Cards</button>
-    <button id="dealFlopBtn">Deal Flop</button>
-    <button id="dealTurnBtn">Deal Turn</button>
-    <button id="dealRiverBtn">Deal River</button>
-    <button id="resetGameBtn">Reset Game</button>
+    <div class="game-controls">
+      <button id="startGameBtn">Start Game</button>
+      <button id="dealPlayerCardsBtn" disabled>Deal Player Cards</button>
+      <button id="dealFlopBtn" disabled>Deal Flop</button>
+      <button id="dealTurnBtn" disabled>Deal Turn</button>
+      <button id="dealRiverBtn" disabled>Deal River</button>
+      <button id="resetGameBtn" disabled>Reset Game</button>
+    </div>
   </div>
   <table id="probabilityTable"></table>
   <div id="player-list-container"></div>

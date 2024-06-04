@@ -10,6 +10,12 @@ const deckElement = document.getElementById("deck");
 const discardElement = document.getElementById("discard");
 const playerListContainer = document.getElementById("player-list-container");
 const probabilityTableId = "probabilityTable";
+const buttonStart = document.getElementById("startGameBtn");
+const buttonDealPlayer = document.getElementById("dealPlayerCardsBtn");
+const buttonDealFlop = document.getElementById("dealFlopBtn");
+const buttonDealTurn = document.getElementById("dealTurnBtn");
+const buttonDealRiver = document.getElementById("dealRiverBtn");
+const buttonReset = document.getElementById("resetGameBtn");
 
 class Game {
   constructor() {
@@ -48,6 +54,12 @@ class Game {
     // Create and update the probability table
     createProbabilityTable(probabilityTableId);
     updateProbabilityTable("pre-deal", []);
+
+    // buttonStart.disabled = true;
+    // buttonDealPlayer.disabled = false;
+
+    this.buttonStart.setAttribute("disabled", "");
+    this.buttonDealPlayer.removeAttribute("disabled", "");
   }
 
   dealPlayerCards() {
