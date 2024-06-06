@@ -733,8 +733,8 @@ video {
 .hidden{
   display: none;
 }
-.w-10{
-  width: 2.5rem;
+.\!w-12{
+  width: 3rem !important;
 }
 .w-\[this-is\\\\\]{
   width: this-is\\;
@@ -744,12 +744,6 @@ video {
 }
 .w-\[weird-and-invalid\]{
   width: weird-and-invalid;
-}
-.w-12{
-  width: 3rem;
-}
-.\!w-12{
-  width: 3rem !important;
 }
 .flex-shrink{
   flex-shrink: 1;
@@ -2273,6 +2267,12 @@ body {
       outline-offset: 2px;
     }
   }
+}
+
+.rotated-header {
+  transform: rotate(-90deg);
+  transform-origin: left bottom;
+  white-space: nowrap;
 }
 
 @media (min-width: 640px){

@@ -10,6 +10,7 @@ const deckElement = document.getElementById("deck");
 const discardElement = document.getElementById("discard");
 const playerListContainer = document.getElementById("player-list-container");
 const probabilityTableId = "probabilityTable";
+
 const buttonStart = document.getElementById("startGameBtn");
 const buttonDealPlayer = document.getElementById("dealPlayerCardsBtn");
 const buttonDealFlop = document.getElementById("dealFlopBtn");
