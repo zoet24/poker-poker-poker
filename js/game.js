@@ -47,19 +47,15 @@ class Game {
 
   startGame() {
     this.deck.shuffleDeck();
-    deckElement.classList.remove("card--outline");
 
+    deckElement.classList.remove("card--outline");
     deckElement.textContent = "Deck (" + this.deck.cards.length + ")";
+    buttonStart.setAttribute("disabled", "");
+    buttonDealPlayer.removeAttribute("disabled", "");
 
     // Create and update the probability table
     createProbabilityTable(probabilityTableId);
     updateProbabilityTable("pre-deal", []);
-
-    // buttonStart.disabled = true;
-    // buttonDealPlayer.disabled = false;
-
-    this.buttonStart.setAttribute("disabled", "");
-    this.buttonDealPlayer.removeAttribute("disabled", "");
   }
 
   dealPlayerCards() {
@@ -91,8 +87,10 @@ class Game {
     });
 
     deckElement.textContent = "Deck (" + this.deck.cards.length + ")";
+    buttonDealPlayer.setAttribute("disabled", "");
+    buttonDealFlop.removeAttribute("disabled", "");
 
-    updateProbabilityTable("deal", []);
+    // updateProbabilityTable("deal", []);
   }
 
   dealCommunityCard(cardIndex, elementId) {
@@ -124,6 +122,8 @@ class Game {
   dealFlop() {
     this.discardPile.push(this.deck.drawCard());
     discardElement.classList.remove("card--outline");
+    buttonDealFlop.setAttribute("disabled", "");
+    buttonDealTurn.removeAttribute("disabled", "");
 
     for (let i = 0; i < 3; i++) {
       this.dealCommunityCard(i, `community-card-flop${i + 1}`);
@@ -136,12 +136,18 @@ class Game {
     this.discardPile.push(this.deck.drawCard());
     this.dealCommunityCard(3, "community-card-turn");
 
+    buttonDealTurn.setAttribute("disabled", "");
+    buttonDealRiver.removeAttribute("disabled", "");
+
     updateProbabilityTable("turn", this.communityCards);
   }
 
   dealRiver() {
     this.discardPile.push(this.deck.drawCard());
     this.dealCommunityCard(4, "community-card-river");
+
+    buttonDealRiver.setAttribute("disabled", "");
+    buttonReset.removeAttribute("disabled", "");
 
     this.generateResults();
   }
@@ -229,6 +235,8 @@ class Game {
 
     deckElement.textContent = "Deck";
     discardElement.textContent = "Discard";
+    buttonReset.setAttribute("disabled", "");
+    buttonStart.removeAttribute("disabled", "");
   }
 
   attachEventListeners() {
