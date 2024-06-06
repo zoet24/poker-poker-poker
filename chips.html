@@ -11,45 +11,122 @@
 <body>
   <div class="chips">
     <div class="chip-wrapper">
-      <input type="number">
+      <input type="number" class="top-input">
       <div class="chip bg-blue-500">
-        <input type="number">
+        <input type="number" class="middle-input" value="1">
       </div>
-      <input type="number">
+      <input type="number" class="bottom-input">
     </div>
     <div class="chip-wrapper">
-      <input type="number">
+      <input type="number" class="top-input">
       <div class="chip bg-red-500">
-        <input type="number">
+        <input type="number" class="middle-input" value="2">
       </div>
-      <input type="number">
+      <input type="number" class="bottom-input">
     </div>
     <div class="chip-wrapper">
-      <input type="number">
+      <input type="number" class="top-input">
       <div class="chip bg-green-500">
-        <input type="number">
+        <input type="number" class="middle-input" value="10">
       </div>
-      <input type="number">
+      <input type="number" class="bottom-input">
     </div>
     <div class="chip-wrapper">
-      <input type="number">
+      <input type="number" class="top-input">
       <div class="chip bg-gray-300">
-        <input type="number">
+        <input type="number" class="middle-input" value="25">
       </div>
-      <input type="number">
+      <input type="number" class="bottom-input">
     </div>
     <div class="chip-wrapper">
-      <input type="number">
+      <input type="number" class="top-input">
       <div class="chip bg-slate-700">
-        <input type="number">
+        <input type="number" class="middle-input" value="50">
       </div>
-      <input type="number">
+      <input type="number" class="bottom-input">
     </div>
     <div class="flex flex-col justify-between">
-      <span class="">£5.00</span>
-      <input type="number">
+      <span class="mt-1.5" id="total-value">£0.00</span>
+      <span>£<input type="number" id="target-input" value="5.00" class="!w-12"></span>
     </div>
   </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const topInputs = document.querySelectorAll('.top-input');
+      const middleInputs = document.querySelectorAll('.middle-input');
+      const bottomInputs = document.querySelectorAll('.bottom-input');
+      const totalSpan = document.getElementById('total-value');
+      const targetInput = document.getElementById('target-input');
+  
+      function updateTotal() {
+        let total = 0;
+        topInputs.forEach((input, index) => {
+          const topValue = parseFloat(input.value) || 0;
+          const middleValue = parseFloat(middleInputs[index].value / 100) || 0;
+          total += topValue * middleValue;
+        });
+        totalSpan.textContent = `£${total.toFixed(2)}`;
+      }
+  
+      // Add event listeners to all top and middle inputs
+      topInputs.forEach(input => input.addEventListener('input', updateTotal));
+      middleInputs.forEach(input => input.addEventListener('input', updateTotal));
+
+      
+      function updateCombinations() {
+        const targetValue = parseFloat(targetInput.value);
+        let firstCombination = [];
+
+        // Convert values from pence to pounds by dividing by 100
+        const values = Array.from(middleInputs).map(input => parseFloat(input.value || 0) / 100);
+        const constraints = Array.from(bottomInputs).map(input => parseFloat(input.value) || null);
+
+        outerLoop: // This is the label for the outermost loop
+        for (let a = 10; a <= targetValue / values[0]; a++) { // Min 10 1s
+          if (constraints[0] !== null && constraints[0] !== a) continue;
+          for (let b = 10; b <= targetValue / values[1]; b++) { // Min 10 2s
+            if (constraints[1] !== null && constraints[1] !== b) continue;
+            for (let c = 5; c <= targetValue / values[2]; c++) { // Min 5 10s
+              if (constraints[2] !== null && constraints[2] !== c) continue;
+              for (let d = 4; d <= targetValue / values[3]; d++) { // Min 4 25s
+                if (constraints[3] !== null && constraints[3] !== d) continue;
+                for (let e = 4; e <= targetValue / values[4]; e++) { // Min 4 50s
+                  if (constraints[4] !== null && constraints[4] !== e) continue;
+                  if ((a * values[0] +
+                      b * values[1] +
+                      c * values[2] +
+                      d * values[3] +
+                      e * values[4]) === targetValue) {
+                    firstCombination = [a, b, c, d, e];
+                    break outerLoop; // Break out of all loops when the first valid combination is found
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        if (firstCombination.length > 0) {
+          bottomInputs.forEach((input, index) => {
+            if (index < firstCombination.length) {
+              input.placeholder = firstCombination[index];
+            }
+          });
+          console.log("First valid combination that sums to the target:", firstCombination);
+        } else {
+          console.log("No valid combination found that sums to the target.");
+        }
+      }
+
+      targetInput.addEventListener('input', updateCombinations);
+      middleInputs.forEach(input => input.addEventListener('input', updateCombinations));
+      bottomInputs.forEach(input => input.addEventListener('input', updateCombinations));
+
+      // Initial call to display combinations with default values
+      updateCombinations();
+    });
+  </script>
 </body>
 
 </html>
