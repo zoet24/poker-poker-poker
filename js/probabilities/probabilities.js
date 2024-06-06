@@ -59,7 +59,7 @@ export const updateProbabilityTable = (stage, communityCards) => {
     row.cells[1].textContent = `${probabilities.royalFlushProb.toFixed(6)}%`;
     row.cells[2].textContent = `${probabilities.straightFlushProb.toFixed(6)}%`;
     row.cells[3].textContent = `${probabilities.fourOfAKindProb.toFixed(6)}%`;
-    // row.cells[4].textContent = `${probabilities.fullHouseProb.toFixed(6)}%`;
+    row.cells[4].textContent = `${probabilities.fullHouseProb.toFixed(6)}%`;
   });
 };
 
@@ -79,6 +79,7 @@ const calculateProbabilities = (stage, playerHand, communityCards) => {
       royalFlushProb: 0,
       straightFlushProb: 0,
       fourOfAKindProb: 0,
+      fullHouseProb: 0,
     };
   }
 };
