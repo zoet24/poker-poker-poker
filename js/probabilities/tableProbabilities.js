@@ -91,7 +91,7 @@ const calculateProbabilities = (stage, playerHand, communityCards) => {
   if (stage === "pre-deal") {
     return calculatePreDealProbs();
   } else if (stage === "deal") {
-    return calculatePostDealProbs(playerHand, deck);
+    return calculatePostDealProbs(playerHand, communityCards, deck);
   } else if (stage === "flop") {
     return calculateFlopProbs(playerHand, communityCards, deck);
   } else if (stage === "turn") {
