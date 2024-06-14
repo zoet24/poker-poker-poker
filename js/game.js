@@ -16,7 +16,6 @@ const buttonDealPlayer = document.getElementById("dealPlayerCardsBtn");
 const buttonDealFlop = document.getElementById("dealFlopBtn");
 const buttonDealTurn = document.getElementById("dealTurnBtn");
 const buttonDealRiver = document.getElementById("dealRiverBtn");
-const buttonReset = document.getElementById("resetGameBtn");
 
 class Game {
   constructor() {
@@ -91,7 +90,7 @@ class Game {
     buttonDealPlayer.setAttribute("disabled", "");
     buttonDealFlop.removeAttribute("disabled", "");
 
-    // updateProbabilityTable("deal", []);
+    updateProbabilityTable("deal", []);
   }
 
   dealCommunityCard(cardIndex, elementId) {
@@ -148,7 +147,6 @@ class Game {
     this.dealCommunityCard(4, "community-card-river");
 
     buttonDealRiver.setAttribute("disabled", "");
-    buttonReset.removeAttribute("disabled", "");
 
     this.generateResults();
   }
@@ -236,8 +234,11 @@ class Game {
 
     deckElement.textContent = "Deck";
     discardElement.textContent = "Discard";
-    buttonReset.setAttribute("disabled", "");
     buttonStart.removeAttribute("disabled", "");
+    buttonDealPlayer.setAttribute("disabled", "");
+    buttonDealFlop.setAttribute("disabled", "");
+    buttonDealTurn.setAttribute("disabled", "");
+    buttonDealRiver.setAttribute("disabled", "");
   }
 
   attachEventListeners() {

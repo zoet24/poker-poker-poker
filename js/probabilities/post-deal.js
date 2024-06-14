@@ -70,5 +70,12 @@ export const calculatePostDealProbs = (playerHand, deck) => {
     royalFlushProb,
     straightFlushProb,
     fourOfAKindProb,
+    fullHouseProb: 0,
+    flushProb: 0,
+    straightProb: 0,
+    threeOfAKindProb: 0,
+    twoPairProb: 0,
+    onePairProb: 0,
+    highCardProb: 0,
   };
 };
