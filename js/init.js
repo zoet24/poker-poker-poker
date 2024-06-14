@@ -1,5 +1,5 @@
 import { createPlayerElements } from "./players.js";
-import { calculatePlayerPosition } from "./table.js";
+import { calculatePlayerPosition } from "./tablePlayers.js";
 import { toggleShowCards } from "./cards.js";
 
 const table = document.getElementById("table");

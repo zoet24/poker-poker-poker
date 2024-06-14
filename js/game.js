@@ -4,7 +4,7 @@ import { getPlayerHandRank } from "./hands.js";
 import {
   createProbabilityTable,
   updateProbabilityTable,
-} from "./probabilities/probabilities.js";
+} from "./probabilities/tableProbabilities.js";
 
 const deckElement = document.getElementById("deck");
 const discardElement = document.getElementById("discard");
