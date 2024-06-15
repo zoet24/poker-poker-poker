@@ -1,9 +1,7 @@
 import { players } from "../players.js";
-import { Card, Deck } from "../cards.js";
+import { Deck } from "../cards.js";
 import { calculatePreDealProbs } from "./pre-deal.js";
 import { calculatePostDealProbs } from "./post-deal.js";
-// import { calculateFlopProbs } from "./flop.js";
-// import { calculateTurnProbs } from "./turn.js";
 import { toCamelCase } from "./helpers.js";
 
 const handNames = [
@@ -52,11 +50,16 @@ export const createProbabilityTable = (tableId) => {
   });
 };
 
-export const updateProbabilityTable = (stage, communityCards) => {
+export const updateProbabilityTable = async (stage, communityCards) => {
   const table = document.getElementById("probabilityTable");
+  const spinnerElement = document.getElementById("spinner");
+  spinnerElement.classList.add("spinner--loading");
 
-  players.forEach((player, index) => {
-    const probabilities = calculateProbabilities(
+  const minDisplayTime = 1000; // 1 second minimum display time
+  const startTime = Date.now();
+
+  const promises = players.map(async (player, index) => {
+    const probabilities = await calculateProbabilities(
       stage,
       player.hand,
       communityCards
@@ -70,14 +73,30 @@ export const updateProbabilityTable = (stage, communityCards) => {
       )}%`;
     });
   });
+
+  await Promise.all(promises);
+
+  const elapsedTime = Date.now() - startTime;
+  const remainingTime = Math.max(0, minDisplayTime - elapsedTime);
+
+  setTimeout(() => {
+    spinnerElement.classList.remove("spinner--loading");
+  }, remainingTime);
 };
 
-const calculateProbabilities = (stage, playerHand, communityCards) => {
+const calculateProbabilities = async (stage, playerHand, communityCards) => {
   const deck = new Deck();
 
+  let probabilities;
   if (stage === "pre-deal") {
-    return calculatePreDealProbs();
+    probabilities = calculatePreDealProbs();
   } else {
-    return calculatePostDealProbs(playerHand, communityCards, deck);
+    probabilities = await calculatePostDealProbs(
+      playerHand,
+      communityCards,
+      deck
+    );
   }
+
+  return probabilities;
 };

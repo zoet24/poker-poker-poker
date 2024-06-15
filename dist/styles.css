@@ -21,7 +21,7 @@ body ul li {
   @apply border-b;
 }
 body table {
-  @apply m-4 border;
+  @apply m-4 border rounded-md;
 }
 body table tr {
   @apply border-b;
@@ -39,7 +39,7 @@ body input[type=number]::-webkit-outer-spin-button {
 }
 
 .table {
-  @apply relative rounded-full shadow-lg;
+  @apply relative rounded-full shadow-lg outline outline-4 outline-black/10;
   width: 550px;
   height: 550px;
 }

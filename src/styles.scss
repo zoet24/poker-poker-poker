@@ -26,7 +26,7 @@ body {
     @apply border-b;
   }
   table {
-    @apply m-4 border;
+    @apply m-4 border rounded-md;
 
     tr {
       @apply border-b;
@@ -46,7 +46,7 @@ body {
 }
 
 .table {
-  @apply relative rounded-full shadow-lg;
+  @apply relative rounded-full shadow-lg outline outline-4 outline-black/10;
   width: 550px;
   height: 550px;
 }
