@@ -63,9 +63,9 @@ export const calculatePostDealProbs = (playerHand, communityCards, deck) => {
     }
   });
 
-  console.log("possibleRoyalFlushes", possibleRoyalFlushes);
-  console.log("possibleStraightFlushes", possibleStraightFlushes);
-  // console.log("possibleFourOfAKinds", possibleFourOfAKinds);
+  // console.log("possibleRoyalFlushes", possibleRoyalFlushes);
+  // console.log("possibleStraightFlushes", possibleStraightFlushes);
+  console.log("possibleFourOfAKinds", possibleFourOfAKinds);
   // console.log("possibleFullHouses", possibleFullHouses);
   // console.log("possibleFlushes", possibleFlushes);
   // console.log("possibleStraights", possibleStraights);
