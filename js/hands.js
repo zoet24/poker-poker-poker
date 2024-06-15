@@ -1,17 +1,7 @@
 import { Card } from "./cards.js";
+import { isRoyalFlush } from "./probabilities/hands.js";
 
-// Royal flush: 900
-export const isRoyalFlush = (cards) => {
-  const royalValues = ["10", "11", "12", "13", "14"];
-  const suits = new Set(cards.map((card) => card.suit));
-  const values = cards
-    .map((card) => card.value)
-    .sort((a, b) => parseInt(a) - parseInt(b));
-
-  return (
-    royalValues.every((value) => values.includes(value)) && suits.size === 1 // All cards must be of the same suit
-  );
-};
+// Royal flush: 900 - isRoyalFlush probabilities/hands.js
 
 // Straight flush: 800 - 900
 const getStraightFlushRank = (cards) => {

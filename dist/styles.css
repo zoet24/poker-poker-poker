@@ -1,61 +1,55 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap');
-
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 body {
   font-family: "Roboto Slab", serif;
-
-  button {
-    @apply border border-black rounded-md p-2;
-
-    &:hover {
-      @apply underline;
-    }
-
-    &:disabled {
-      @apply text-gray-500 border-gray-500 bg-gray-100;
-
-      &:hover {
-        @apply no-underline;
-      }
-    }
-  }
-  ul li {
-    @apply border-b;
-  }
-  table {
-    @apply m-4 border;
-
-    tr {
-      @apply border-b;
-    }
-    tr th {
-      @apply border-r p-1;
-    }
-    tr td {
-      @apply border-r p-1;
-    }
-  }
-  input[type=number]::-webkit-inner-spin-button, 
-  input[type=number]::-webkit-outer-spin-button { 
-    -webkit-appearance: none; 
-    margin: 0; 
-  }
+}
+body button {
+  @apply border border-black rounded-md p-2;
+}
+body button:hover {
+  @apply underline;
+}
+body button:disabled {
+  @apply text-gray--dark border-gray--dark text-gray--dark bg-gray--light;
+}
+body button:disabled:hover {
+  @apply no-underline;
+}
+body ul li {
+  @apply border-b;
+}
+body table {
+  @apply m-4 border;
+}
+body table tr {
+  @apply border-b;
+}
+body table tr th {
+  @apply border-r p-1;
+}
+body table tr td {
+  @apply border-r p-1;
+}
+body input[type=number]::-webkit-inner-spin-button,
+body input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .table {
-  @apply relative border-black border rounded-full;
+  @apply relative rounded-full shadow-lg;
   width: 550px;
   height: 550px;
 }
 
 .player {
-  @apply absolute bg-gray-300 border-black border rounded-full flex justify-center items-center text-center cursor-pointer;
+  @apply absolute bg-gray border-black border rounded-full flex justify-center items-center text-center cursor-pointer;
   width: 60px;
   height: 60px;
 }
+
 .player--hidden {
   @apply border-dashed;
 }
@@ -65,15 +59,19 @@ body {
   width: 40px;
   height: 60px;
 }
+
 .card--red {
-  @apply text-red-500;
+  @apply text-red;
 }
+
 .card--hidden {
   @apply text-white;
 }
+
 .card--outline {
   @apply border-dashed;
 }
+
 .card--rotated {
   height: 40px;
   width: 60px;
@@ -81,8 +79,9 @@ body {
 
 .cards--player {
   @apply flex absolute;
-  bottom: 55px;
+  bottom: 60px;
 }
+
 .cards--community {
   @apply absolute flex flex-col items-center;
   transform: translate(-50%, -50%);
@@ -96,14 +95,12 @@ body {
 
 .chips {
   @apply flex space-x-2 m-4;
-
-  input {
-    @apply border border-black rounded-md w-10 text-center p-1;
-
-    &:focus-visible {
-      @apply outline-none;
-    }
-  }
+}
+.chips input {
+  @apply border border-black rounded-md w-10 text-center p-1;
+}
+.chips input:focus-visible {
+  @apply outline-none;
 }
 
 .chip-wrapper {
@@ -112,20 +109,28 @@ body {
 
 .chip {
   @apply h-20 w-20 border border-black rounded-full flex justify-center items-center;
-
-  input {
-    @apply border-none w-1/2 h-1/2 rounded-full text-center;
-
-    &:focus-visible {
-      @apply outline-none;
-    }
-  }
+}
+.chip input {
+  @apply border-none w-1/2 h-1/2 rounded-full text-center;
+}
+.chip input:focus-visible {
+  @apply outline-none;
 }
 
-.rotated-header {
-  transform: rotate(-90deg);
-  transform-origin: left bottom;
-  white-space: nowrap;
+/* Spinner CSS */
+.spinner {
+  @apply border-4 border-solid border-black/10 rounded-full absolute w-full h-full inline-block;
+}
+
+.spinner--loading {
+  @apply bg-gray/50 z-10 border-l-black;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /*# sourceMappingURL=styles.css.map */

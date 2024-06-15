@@ -1,88 +1,139 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-.table {
-  @apply relative border-black border-2 rounded-full;
-
-  width: 600px;
-  height: 600px;
-}
-
-.player {
-  @apply absolute bg-gray-300 border-black border-2 rounded-full flex justify-center items-center text-center cursor-pointer;
-
-  width: 50px;
-  height: 50px;
-
-  &--hidden {
-    @apply border-dashed;
-  }
-}
-
-.card {
-  @apply bg-white border border-black font-bold m-1 flex justify-center items-center text-center;
-
-  width: 40px;
-  height: 60px;
-
-  &--red {
-    @apply text-red-500;
-  }
-
-  &--hidden {
-    @apply text-white;
-  }
-
-  &--outline {
-    @apply border-dashed;
-  }
-}
-
-.cards {
-  &--player {
-    @apply flex absolute;
-    
-    bottom: 55px;
-  }
-  
-  &--community {
-    @apply absolute flex flex-col items-center;
-    
-    transform: translate(-50%, -50%);
-    top: 50%;
-    left: 50%;
-  }
-}
-
-.game-controls {
-  @apply mt-5;
-}
-
 body {
-  button {
-    @apply border rounded-sm p-2;
-  }
+  font-family: "Roboto Slab", serif;
 
-  ul {
-    li {
-      @apply border-b;
+  button {
+    @apply border border-black rounded-md p-2;
+
+    &:hover {
+      @apply underline;
+    }
+
+    &:disabled {
+      @apply text-gray--dark border-gray--dark text-gray--dark bg-gray--light;
+
+      &:hover {
+        @apply no-underline;
+      }
     }
   }
-
+  ul li {
+    @apply border-b;
+  }
   table {
     @apply m-4 border;
 
     tr {
       @apply border-b;
-
-      th {
-        @apply border-r p-1;
-      }
-
-      td {
-        @apply border-r p-1;
-      }
     }
+    tr th {
+      @apply border-r p-1;
+    }
+    tr td {
+      @apply border-r p-1;
+    }
+  }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+.table {
+  @apply relative rounded-full shadow-lg;
+  width: 550px;
+  height: 550px;
+}
+
+.player {
+  @apply absolute bg-gray border-black border rounded-full flex justify-center items-center text-center cursor-pointer;
+  width: 60px;
+  height: 60px;
+}
+.player--hidden {
+  @apply border-dashed;
+}
+
+.card {
+  @apply bg-white border border-black font-bold m-1 flex justify-center items-center text-center rounded-md;
+  width: 40px;
+  height: 60px;
+}
+.card--red {
+  @apply text-red;
+}
+.card--hidden {
+  @apply text-white;
+}
+.card--outline {
+  @apply border-dashed;
+}
+.card--rotated {
+  height: 40px;
+  width: 60px;
+}
+
+.cards--player {
+  @apply flex absolute;
+  bottom: 60px;
+}
+.cards--community {
+  @apply absolute flex flex-col items-center;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}
+
+.game-controls {
+  @apply flex flex-col space-y-2;
+}
+
+.chips {
+  @apply flex space-x-2 m-4;
+
+  input {
+    @apply border border-black rounded-md w-10 text-center p-1;
+
+    &:focus-visible {
+      @apply outline-none;
+    }
+  }
+}
+
+.chip-wrapper {
+  @apply flex flex-col items-center space-y-2;
+}
+
+.chip {
+  @apply h-20 w-20 border border-black rounded-full flex justify-center items-center;
+
+  input {
+    @apply border-none w-1/2 h-1/2 rounded-full text-center;
+
+    &:focus-visible {
+      @apply outline-none;
+    }
+  }
+}
+
+/* Spinner CSS */
+.spinner {
+  @apply border-4 border-solid border-black/10 rounded-full absolute w-full h-full inline-block;
+}
+
+.spinner--loading {
+  @apply bg-gray/50 z-10 border-l-black;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }

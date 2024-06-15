@@ -1,5 +1,4 @@
-import { Card, Deck } from "../cards.js";
-import { generateCombinations, isSequential } from "./helpers.js";
+import { isSequential } from "./helpers.js";
 
 export const isRoyalFlush = (cards) => {
   const suits = new Set(cards.map((card) => card.suit));
@@ -66,15 +65,71 @@ export const isFourOfAKind = (cards) => {
 };
 
 export const isFullHouse = (cards) => {
-  return false;
+  const valueCount = {};
+
+  // Count occurrences of each card value
+  cards.forEach((card) => {
+    if (!valueCount[card.value]) {
+      valueCount[card.value] = 0;
+    }
+    valueCount[card.value]++;
+  });
+
+  const counts = Object.values(valueCount);
+
+  // Check if there's a Three of a Kind
+  const hasThreeOfAKind = counts.some((count) => count === 3);
+
+  // Check if there are at least two different pairs (including the possibility of another Three of a Kind)
+  const pairCount = counts.filter((count) => count >= 2).length;
+
+  return hasThreeOfAKind && pairCount >= 2;
 };
 
 export const isFlush = (cards) => {
-  return false;
+  const suitCount = {};
+
+  // Count occurrences of each suit
+  cards.forEach((card) => {
+    if (!suitCount[card.suit]) {
+      suitCount[card.suit] = 0;
+    }
+    suitCount[card.suit]++;
+  });
+
+  // Check if any suit appears at least 5 times
+  return Object.values(suitCount).some((count) => count >= 5);
 };
 
 export const isStraight = (cards) => {
-  return false;
+  const values = cards
+    .map((card) => parseInt(card.value))
+    .sort((a, b) => a - b);
+
+  // Remove duplicates
+  const uniqueValues = [...new Set(values)];
+
+  // Check for the normal straight (e.g., 5-6-7-8-9)
+  for (let i = 0; i < uniqueValues.length - 4; i++) {
+    if (
+      uniqueValues[i + 4] - uniqueValues[i + 3] === 1 &&
+      uniqueValues[i + 3] - uniqueValues[i + 2] === 1 &&
+      uniqueValues[i + 2] - uniqueValues[i + 1] === 1 &&
+      uniqueValues[i + 1] - uniqueValues[i] === 1
+    ) {
+      return true;
+    }
+  }
+
+  // Check for the wheel straight (A-2-3-4-5)
+  const hasWheelStraight =
+    uniqueValues.includes(14) &&
+    uniqueValues.includes(2) &&
+    uniqueValues.includes(3) &&
+    uniqueValues.includes(4) &&
+    uniqueValues.includes(5);
+
+  return hasWheelStraight;
 };
 
 export const isThreeOfAKind = (cards) => {
@@ -124,84 +179,3 @@ export const isOnePair = (cards) => {
   const isOnePair = Object.values(valueCount).some((count) => count === 2);
   return isOnePair;
 };
-
-// // Generate all possible Four of a Kind combinations
-// export const generateFourOfAKindCombos = () => {
-//   const combos = [];
-//   const suits = ["heart", "diamond", "club", "spade"];
-//   const ranks = [
-//     "2",
-//     "3",
-//     "4",
-//     "5",
-//     "6",
-//     "7",
-//     "8",
-//     "9",
-//     "10",
-//     "11",
-//     "12",
-//     "13",
-//     "14",
-//   ];
-
-//   for (const rank of ranks) {
-//     const fourOfAKindCards = suits.map((suit) => new Card(rank, suit));
-//     const remainingCards = generateCombinations(
-//       new Deck().cards.filter(
-//         (card) =>
-//           !fourOfAKindCards.some(
-//             (fourOfAKindCard) =>
-//               fourOfAKindCard.value === card.value &&
-//               fourOfAKindCard.suit === card.suit
-//           )
-//       ),
-//       3
-//     );
-
-//     for (const combo of remainingCards) {
-//       combos.push([...fourOfAKindCards, ...combo]);
-//     }
-//   }
-
-//   // console.log("Generated Four of a Kind Combos:", combos.length); // Debugging log
-//   return combos;
-// };
-
-// export const generateFullHouseCombos = (currentHand, deck) => {
-//   const remainingDeck = deck.cards.filter(
-//     (card) =>
-//       !currentHand.some(
-//         (knownCard) =>
-//           knownCard.value === card.value && knownCard.suit === card.suit
-//       )
-//   );
-
-//   const cardsToDraw = 7 - currentHand.length;
-//   const allPossibleHands = generateCombinations(remainingDeck, cardsToDraw).map(
-//     (combo) => [...currentHand, ...combo]
-//   );
-
-//   const fullHouseCombos = allPossibleHands.filter(isValidFullHouse);
-//   return fullHouseCombos;
-// };
-
-// const isValidFullHouse = (cards) => {
-//   const valueCount = {};
-//   cards.forEach((card) => {
-//     valueCount[card.value] = (valueCount[card.value] || 0) + 1;
-//   });
-
-//   let threeOfAKindValues = [];
-//   let pairValues = [];
-
-//   for (const value in valueCount) {
-//     if (valueCount[value] === 3) {
-//       threeOfAKindValues.push(value);
-//     } else if (valueCount[value] === 2) {
-//       pairValues.push(value);
-//     }
-//   }
-
-//   return threeOfAKindValues.length > 0 && pairValues.length > 0;
-// };
