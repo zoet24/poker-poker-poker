@@ -92,6 +92,12 @@ body {
 
 .game-controls {
   @apply flex flex-col space-y-2;
+
+  &--loading {
+    button {
+      @apply text-gray--dark border-gray--dark text-gray--dark bg-gray--light pointer-events-none;
+    }
+  }
 }
 
 .chips {

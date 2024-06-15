@@ -92,6 +92,9 @@ body input[type=number]::-webkit-outer-spin-button {
 .game-controls {
   @apply flex flex-col space-y-2;
 }
+.game-controls--loading button {
+  @apply text-gray--dark border-gray--dark text-gray--dark bg-gray--light pointer-events-none;
+}
 
 .chips {
   @apply flex space-x-2 m-4;

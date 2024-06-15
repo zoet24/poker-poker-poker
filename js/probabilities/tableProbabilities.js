@@ -53,7 +53,10 @@ export const createProbabilityTable = (tableId) => {
 export const updateProbabilityTable = async (stage, communityCards) => {
   const table = document.getElementById("probabilityTable");
   const spinnerElement = document.getElementById("spinner");
+  const gameControls = document.getElementById("game-controls");
+
   spinnerElement.classList.add("spinner--loading");
+  gameControls.classList.add("game-controls--loading");
 
   const minDisplayTime = 1000; // 1 second minimum display time
   const startTime = Date.now();
@@ -81,6 +84,7 @@ export const updateProbabilityTable = async (stage, communityCards) => {
 
   setTimeout(() => {
     spinnerElement.classList.remove("spinner--loading");
+    gameControls.classList.remove("game-controls--loading");
   }, remainingTime);
 };
 

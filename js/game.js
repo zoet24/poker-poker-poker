@@ -7,7 +7,7 @@ import {
 } from "./probabilities/tableProbabilities.js";
 
 const deckElement = document.getElementById("deck");
-const discardElement = document.getElementById("discard");
+const burnElement = document.getElementById("burn");
 const playerListContainer = document.getElementById("player-list-container");
 const probabilityTableId = "probabilityTable";
 
@@ -22,7 +22,7 @@ class Game {
     this.deck = new Deck();
     this.players = players;
     this.communityCards = [];
-    this.discardPile = [];
+    this.burnPile = [];
     this.communityCardSet = [
       // new Card("10", "heart"),
       // new Card("10", "spade"),
@@ -116,12 +116,12 @@ class Game {
     cardElement.textContent = cardValue + suitSymbol;
 
     deckElement.textContent = "Deck (" + this.deck.cards.length + ")";
-    discardElement.textContent = "Discard (" + this.discardPile.length + ")";
+    burnElement.textContent = "Burn (" + this.burnPile.length + ")";
   }
 
   dealFlop() {
-    this.discardPile.push(this.deck.drawCard());
-    discardElement.classList.remove("card--outline");
+    this.burnPile.push(this.deck.drawCard());
+    burnElement.classList.remove("card--outline");
     buttonDealFlop.setAttribute("disabled", "");
     buttonDealTurn.removeAttribute("disabled", "");
 
@@ -133,7 +133,7 @@ class Game {
   }
 
   dealTurn() {
-    this.discardPile.push(this.deck.drawCard());
+    this.burnPile.push(this.deck.drawCard());
     this.dealCommunityCard(3, "community-card-turn");
 
     buttonDealTurn.setAttribute("disabled", "");
@@ -143,7 +143,7 @@ class Game {
   }
 
   dealRiver() {
-    this.discardPile.push(this.deck.drawCard());
+    this.burnPile.push(this.deck.drawCard());
     this.dealCommunityCard(4, "community-card-river");
 
     buttonDealRiver.setAttribute("disabled", "");
@@ -208,9 +208,9 @@ class Game {
       player.hand = [];
     });
 
-    // Clear community cards and discard pile
+    // Clear community cards and burn pile
     this.communityCards = [];
-    this.discardPile = [];
+    this.burnPile = [];
 
     // New deck
     this.deck = new Deck();
@@ -227,13 +227,13 @@ class Game {
       card.classList.remove("card--red");
       card.classList.remove("card--hidden");
 
-      if (card.id !== "deck" && card.id !== "discard") {
+      if (card.id !== "deck" && card.id !== "burn") {
         card.textContent = "";
       }
     });
 
     deckElement.textContent = "Deck";
-    discardElement.textContent = "Discard";
+    burnElement.textContent = "Burn";
     buttonStart.removeAttribute("disabled", "");
     buttonDealPlayer.setAttribute("disabled", "");
     buttonDealFlop.setAttribute("disabled", "");

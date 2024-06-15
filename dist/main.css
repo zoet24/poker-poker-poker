@@ -654,9 +654,6 @@ video {
 .list-item{
   display: list-item;
 }
-.\!hidden{
-  display: none !important;
-}
 .hidden{
   display: none;
 }
@@ -1457,6 +1454,10 @@ video {
   --tw-bg-opacity: 1;
   background-color: rgb(209 213 219 / var(--tw-bg-opacity));
 }
+.bg-gray--light{
+  --tw-bg-opacity: 1;
+  background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+}
 .bg-gray\/50{
   background-color: rgb(209 213 219 / 0.5);
 }
@@ -2093,6 +2094,15 @@ body input[type=number]::-webkit-outer-spin-button {
   --tw-space-y-reverse: 0;
   margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
+}
+.game-controls--loading button{
+  pointer-events: none;
+  --tw-border-opacity: 1;
+  border-color: rgb(107 114 128 / var(--tw-border-opacity));
+  --tw-bg-opacity: 1;
+  background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+  --tw-text-opacity: 1;
+  color: rgb(107 114 128 / var(--tw-text-opacity));
 }
 
 .chips{
