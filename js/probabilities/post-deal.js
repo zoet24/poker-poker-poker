@@ -1,27 +1,18 @@
 import {
-  generateRoyalFlushCombos,
-  generateStraightFlushCombos,
-  generateFourOfAKindCombos,
+  isRoyalFlush,
+  isStraightFlush,
+  isFourOfAKind,
+  isFullHouse,
+  isFlush,
+  isStraight,
+  isThreeOfAKind,
+  isTwoPair,
+  isOnePair,
 } from "./hands.js";
-import { combinatorial } from "./helpers.js";
-
-const calculateHandProbabilities = (hand, remainingDeck, generateCombos) => {
-  const allPossibleCombos = generateCombos();
-  const validCombos = allPossibleCombos.filter((combo) => {
-    return hand.every((card) =>
-      combo.some((c) => c.value === card.value && c.suit === card.suit)
-    );
-  });
-
-  const possibleHands = validCombos.length;
-  const cardsToDraw = 7 - hand.length;
-  const totalHands = combinatorial(remainingDeck.length, cardsToDraw);
-
-  return (possibleHands / totalHands) * 100;
-};
+import { generateCombinations } from "./helpers.js";
 
 export const calculatePostDealProbs = (playerHand, communityCards, deck) => {
-  const currentHand = playerHand.concat(communityCards);
+  const currentHand = [...playerHand, ...communityCards];
 
   const remainingDeck = deck.cards.filter(
     (card) =>
@@ -31,44 +22,92 @@ export const calculatePostDealProbs = (playerHand, communityCards, deck) => {
       )
   );
 
-  const royalFlushProb = calculateHandProbabilities(
-    currentHand,
-    remainingDeck,
-    generateRoyalFlushCombos
+  // Generate all possible 7-card hands
+  const cardsToDraw = 7 - currentHand.length;
+  const possibleHands = generateCombinations(remainingDeck, cardsToDraw).map(
+    (combo) => [...currentHand, ...combo]
   );
 
-  const straightFlushProb = calculateHandProbabilities(
-    currentHand,
-    remainingDeck,
-    generateStraightFlushCombos
-  );
+  const possibleRoyalFlushes = [];
+  const possibleStraightFlushes = [];
+  const possibleFourOfAKinds = [];
+  const possibleFullHouses = [];
+  const possibleFlushes = [];
+  const possibleStraights = [];
+  const possibleThreeOfAKinds = [];
+  const possibleTwoPairs = [];
+  const possibleOnePairs = [];
+  const possibleHighCards = [];
 
-  const fourOfAKindProb = calculateHandProbabilities(
-    currentHand,
-    remainingDeck,
-    generateFourOfAKindCombos
-  );
+  possibleHands.forEach((hand) => {
+    if (isRoyalFlush(hand)) {
+      possibleRoyalFlushes.push(hand);
+    } else if (isStraightFlush(hand)) {
+      possibleStraightFlushes.push(hand);
+    } else if (isFourOfAKind(hand)) {
+      possibleFourOfAKinds.push(hand);
+    } else if (isFullHouse(hand)) {
+      possibleFullHouses.push(hand);
+    } else if (isFlush(hand)) {
+      possibleFlushes.push(hand);
+    } else if (isStraight(hand)) {
+      possibleStraights.push(hand);
+    } else if (isThreeOfAKind(hand)) {
+      possibleThreeOfAKinds.push(hand);
+    } else if (isTwoPair(hand)) {
+      possibleTwoPairs.push(hand);
+    } else if (isOnePair(hand)) {
+      possibleOnePairs.push(hand);
+    } else {
+      possibleHighCards.push(hand);
+    }
+  });
 
-  console.log("Player hand:", playerHand);
-  console.log("Community cards:", communityCards);
+  console.log("possibleRoyalFlushes", possibleRoyalFlushes);
+  console.log("possibleStraightFlushes", possibleStraightFlushes);
+  // console.log("possibleFourOfAKinds", possibleFourOfAKinds);
+  // console.log("possibleFullHouses", possibleFullHouses);
+  // console.log("possibleFlushes", possibleFlushes);
+  // console.log("possibleStraights", possibleStraights);
+  // console.log("possibleThreeOfAKinds", possibleThreeOfAKinds);
+  // console.log("possibleTwoPairs", possibleTwoPairs);
+  // console.log("possibleOnePairs", possibleOnePairs);
+
+  const totalHands = possibleHands.length;
+  const royalFlushProb = (possibleRoyalFlushes.length / totalHands) * 100;
+  const straightFlushProb = (possibleStraightFlushes.length / totalHands) * 100;
+  const fourOfAKindProb = (possibleFourOfAKinds.length / totalHands) * 100;
+  const fullHouseProb = (possibleFullHouses.length / totalHands) * 100;
+  const flushProb = (possibleFlushes.length / totalHands) * 100;
+  const straightProb = (possibleStraights.length / totalHands) * 100;
+  const threeOfAKindProb = (possibleThreeOfAKinds.length / totalHands) * 100;
+  const twoPairProb = (possibleTwoPairs.length / totalHands) * 100;
+  const onePairProb = (possibleOnePairs.length / totalHands) * 100;
+  const highCardProb = (possibleHighCards.length / totalHands) * 100;
+
   console.log(
-    "Total hands from remaining deck:",
-    combinatorial(remainingDeck.length, 7 - currentHand.length)
+    royalFlushProb +
+      straightFlushProb +
+      fourOfAKindProb +
+      fullHouseProb +
+      flushProb +
+      straightFlushProb +
+      threeOfAKindProb +
+      twoPairProb +
+      onePairProb +
+      highCardProb
   );
-  console.log("Probability of Royal Flush post-deal:", royalFlushProb);
-  console.log("Probability of Straight Flush post-deal:", straightFlushProb);
-  console.log("Probability of Four of a Kind post-deal:", fourOfAKindProb);
 
   return {
     royalFlushProb,
     straightFlushProb,
     fourOfAKindProb,
-    fullHouseProb: 0,
-    flushProb: 0,
-    straightProb: 0,
-    threeOfAKindProb: 0,
-    twoPairProb: 0,
-    onePairProb: 0,
-    highCardProb: 0,
+    fullHouseProb,
+    flushProb,
+    straightProb,
+    threeOfAKindProb,
+    twoPairProb,
+    onePairProb,
+    highCardProb,
   };
 };
