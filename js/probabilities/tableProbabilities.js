@@ -2,7 +2,7 @@ import { players } from "../players.js";
 import { Deck } from "../cards.js";
 import { calculatePreDealProbs } from "./pre-deal.js";
 import { calculatePostDealProbs } from "./post-deal.js";
-import { toCamelCase } from "./helpers.js";
+import { toCamelCase, abbreviateHandNames } from "./helpers.js";
 
 const handNames = [
   "Royal Flush",
@@ -22,7 +22,8 @@ export const createProbabilityTable = (tableId) => {
 
   // Create table header
   const headerRow = document.createElement("tr");
-  const headers = ["Player", ...handNames];
+  const abbreviatedHandNames = abbreviateHandNames(handNames);
+  const headers = ["Rank", "Best Hand", "Player", ...abbreviatedHandNames];
   headers.forEach((header) => {
     const th = document.createElement("th");
     th.textContent = header;
@@ -33,6 +34,14 @@ export const createProbabilityTable = (tableId) => {
   // Create a row for each player
   players.forEach((player) => {
     const row = document.createElement("tr");
+
+    const rankCell = document.createElement("td");
+    rankCell.textContent = "-";
+    row.appendChild(rankCell);
+
+    const bestHandCell = document.createElement("td");
+    bestHandCell.textContent = "-";
+    row.appendChild(bestHandCell);
 
     // Player name cell
     const nameCell = document.createElement("td");
@@ -71,9 +80,16 @@ export const updateProbabilityTable = async (stage, communityCards) => {
 
     handNames.forEach((handName, handIndex) => {
       const probKey = toCamelCase(handName) + "Prob";
-      row.cells[handIndex + 1].textContent = `${probabilities[probKey].toFixed(
-        3
-      )}%`;
+      const cell = row.cells[handIndex + 3];
+      cell.textContent = `${probabilities[probKey].toFixed(3)}%`;
+
+      // Add the animation class
+      cell.classList.add("updated-cell");
+
+      // Remove the animation class after the animation completes
+      setTimeout(() => {
+        cell.classList.remove("updated-cell");
+      }, 2000); // 2000ms matches the duration of the animation
     });
   });
 

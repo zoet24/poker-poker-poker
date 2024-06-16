@@ -161,24 +161,34 @@ class Game {
 
     results.sort((a, b) => b.rank - a.rank);
 
-    const list = document.createElement("ul");
+    // Find the table
+    const table = document.getElementById("probabilityTable");
 
-    // Iterate through players
-    results.forEach((result) => {
-      // Create list item for each player
-      const listItem = document.createElement("li");
+    // Mapping of hand names to column indices
+    const handNameToIndex = {
+      "Royal Flush": 3,
+      "Straight Flush": 4,
+      "Four Of A Kind": 5,
+      "Full House": 6,
+      Flush: 7,
+      Straight: 8,
+      "Three Of A Kind": 9,
+      "Two Pair": 10,
+      "One Pair": 11,
+      "High Card": 12,
+    };
 
-      // Player name
-      const playerName = document.createElement("span");
-      playerName.textContent = `Player: ${result.name}`;
+    // Update the table with results
+    results.forEach((result, index) => {
+      const row = table.rows[index + 1]; // +1 to skip header row
 
-      // Player rank
-      const playerRank = document.createElement("span");
-      playerRank.textContent = `Rank: ${result.rank}`;
+      console.log(result);
 
-      // Player hand
-      const playerHand = document.createElement("span");
-      playerHand.innerHTML = `${result.rankName}: ${result.cards
+      // Update Rank
+      row.cells[0].textContent = result.rank.toFixed(3);
+
+      // Update Best Hand
+      row.cells[1].innerHTML = `${result.cards
         .map((card) => {
           const cardValue = card.getDisplayValue();
           const suitSymbol = card.getSuitSymbol();
@@ -188,17 +198,11 @@ class Game {
         })
         .join(", ")}`;
 
-      // Append name, rank, and hand to list item
-      listItem.appendChild(playerName);
-      listItem.appendChild(document.createElement("br")); // Line break for readability
-      listItem.appendChild(playerRank);
-      listItem.appendChild(document.createElement("br")); // Line break for readability
-      listItem.appendChild(playerHand);
-
-      // Append list item to list
-      list.appendChild(listItem);
-
-      document.getElementById("player-list-container").appendChild(list);
+      // Highlight the winning hand type
+      const handTypeIndex = handNameToIndex[result.rankName];
+      if (handTypeIndex !== undefined) {
+        row.cells[handTypeIndex].classList.add("highlight-winner");
+      }
     });
   }
 

@@ -26,7 +26,7 @@ body {
     @apply border-b;
   }
   table {
-    @apply m-4 border rounded-md;
+    @apply m-4 border rounded-md text-sm;
 
     tr {
       @apply border-b;
@@ -142,4 +142,26 @@ body {
   to {
     transform: rotate(360deg);
   }
+}
+
+// Prob change animation
+@keyframes fadeToBlack {
+  0% {
+    @apply text-green;
+
+    transform: scale(1.1);
+  }
+  100% {
+    @apply text-black;
+
+    transform: scale(1);
+  }
+}
+
+.updated-cell {
+  animation: fadeToBlack 2s ease-in-out;
+}
+
+.highlight-winner {
+  @apply bg-green;
 }

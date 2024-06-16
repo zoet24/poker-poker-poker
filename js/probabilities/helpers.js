@@ -50,3 +50,22 @@ export const toCamelCase = (str) => {
     )
     .join("");
 };
+
+export const abbreviateHandNames = (names) => {
+  return names.map((name) => {
+    if (name === "Four Of A Kind") {
+      return "4OAK";
+    } else if (name === "Three Of A Kind") {
+      return "3OAK";
+    } else if (name === "Two Pair") {
+      return "2P";
+    } else if (name === "One Pair") {
+      return "1P";
+    }
+
+    return name
+      .split(" ")
+      .map((word) => word.charAt(0))
+      .join("");
+  });
+};
