@@ -84,19 +84,6 @@ export const calculatePostDealProbs = async (
       const onePairProb = (possibleOnePairs.length / totalHands) * 100;
       const highCardProb = (possibleHighCards.length / totalHands) * 100;
 
-      console.log(
-        royalFlushProb +
-          straightFlushProb +
-          fourOfAKindProb +
-          fullHouseProb +
-          flushProb +
-          straightProb +
-          threeOfAKindProb +
-          twoPairProb +
-          onePairProb +
-          highCardProb
-      );
-
       resolve({
         royalFlushProb,
         straightFlushProb,

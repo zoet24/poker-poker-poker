@@ -182,8 +182,6 @@ class Game {
     results.forEach((result, index) => {
       const row = table.rows[index + 1]; // +1 to skip header row
 
-      console.log(result);
-
       // Update Rank
       row.cells[0].textContent = result.rank.toFixed(3);
 
@@ -196,7 +194,9 @@ class Game {
           const cardClass = suitColour === "red" ? "card--red" : "";
           return `<span class="${cardClass}">${cardValue}${suitSymbol}</span>`;
         })
-        .join(", ")}`;
+        .join(" ")}`;
+
+      row.cells[2].innerHTML = result.name;
 
       // Highlight the winning hand type
       const handTypeIndex = handNameToIndex[result.rankName];
@@ -204,6 +204,35 @@ class Game {
         row.cells[handTypeIndex].classList.add("highlight-winner");
       }
     });
+
+    this.sortTable(0);
+  }
+
+  sortTable(columnIndex) {
+    let table, rows, switching, i, x, y, shouldSwitch;
+    table = document.getElementById("probabilityTable");
+    switching = true;
+
+    while (switching) {
+      switching = false;
+      rows = table.rows;
+
+      for (i = 1; i < rows.length - 1; i++) {
+        shouldSwitch = false;
+        x = rows[i].getElementsByTagName("td")[columnIndex];
+        y = rows[i + 1].getElementsByTagName("td")[columnIndex];
+
+        if (parseFloat(x.innerHTML) < parseFloat(y.innerHTML)) {
+          shouldSwitch = true;
+          break;
+        }
+      }
+
+      if (shouldSwitch) {
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+      }
+    }
   }
 
   resetGame() {

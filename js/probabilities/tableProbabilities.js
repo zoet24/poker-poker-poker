@@ -41,6 +41,7 @@ export const createProbabilityTable = (tableId) => {
 
     const bestHandCell = document.createElement("td");
     bestHandCell.textContent = "-";
+    bestHandCell.classList.add("best-hand-cell");
     row.appendChild(bestHandCell);
 
     // Player name cell

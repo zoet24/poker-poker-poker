@@ -31,11 +31,20 @@ body {
     tr {
       @apply border-b;
     }
+
+    tr:not(:first-child) {
+      transition: background-color 0.25s ease-in-out;
+
+      &:hover {
+        @apply bg-green;
+      }
+    }
+
     tr th {
       @apply border-r p-1;
     }
     tr td {
-      @apply border-r p-1;
+      @apply border-r p-1 min-w-[60px];
     }
   }
   input[type="number"]::-webkit-inner-spin-button,
@@ -164,4 +173,10 @@ body {
 
 .highlight-winner {
   @apply bg-green;
+
+  transition: all 0.5 ease-in-out;
+}
+
+.best-hand-cell {
+  @apply text-xs min-w-[130px] text-center;
 }
