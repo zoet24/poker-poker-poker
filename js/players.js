@@ -12,20 +12,23 @@ const players = [
   new Player("Mike"),
   new Player("Fran"),
   new Player("Emma"),
-  // new Player("Era"),
-  // new Player("Mushy Peas"),
-  // new Player("Guy"),
-  // new Player("Alex"),
+  new Player("Era"),
+  new Player("Mushy Peas"),
+  new Player("Guy"),
+  new Player("Alex"),
 ];
 
-export { players };
+export { players, Player };
 
 export const createPlayerElements = (
   table,
   calculatePlayerPosition,
-  toggleShowCards
+  toggleShowCards,
+  numberOfPlayers = 4
 ) => {
-  players.forEach((player, index) => {
+  table.innerHTML = "";
+
+  players.slice(0, numberOfPlayers).forEach((player, index) => {
     // Create player element
     const playerContainer = document.createElement("div");
     playerContainer.classList.add("player");

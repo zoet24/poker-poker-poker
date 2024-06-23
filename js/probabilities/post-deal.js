@@ -70,6 +70,18 @@ export const calculatePostDealProbs = async (
         }
       });
 
+      console.log("possibleHands", possibleHands);
+      console.log("possibleRoyalFlushes", possibleRoyalFlushes);
+      console.log("possibleStraightFlushes", possibleStraightFlushes);
+      console.log("possibleFourOfAKinds", possibleFourOfAKinds);
+      console.log("possibleFullHouses", possibleFullHouses);
+      console.log("possibleFlushes", possibleFlushes);
+      console.log("possibleStraights", possibleStraights);
+      console.log("possibleThreeOfAKinds", possibleThreeOfAKinds);
+      console.log("possibleTwoPairs", possibleTwoPairs);
+      console.log("possibleOnePairs", possibleOnePairs);
+      console.log("possibleHighCards", possibleHighCards);
+
       const totalHands = possibleHands.length;
       const royalFlushProb = (possibleRoyalFlushes.length / totalHands) * 100;
       const straightFlushProb =

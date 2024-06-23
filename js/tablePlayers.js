@@ -1,13 +1,12 @@
-import { players } from "./players.js";
-
 export const calculatePlayerPosition = (
   playerContainer,
   index,
   tableWidth,
   tableHeight,
+  numberOfPlayers = 4,
   offset = 10 // Default offset value
 ) => {
-  const angle = (360 / players.length) * index + 90;
+  const angle = (360 / numberOfPlayers) * index + 90;
   const radians = (angle * Math.PI) / 180;
   const playerWidth = playerContainer.offsetWidth;
   const playerHeight = playerContainer.offsetHeight;
