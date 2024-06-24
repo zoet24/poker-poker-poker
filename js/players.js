@@ -1,15 +1,6 @@
-import { calculatePlayerPosition } from "./tablePlayers.js";
-import { toggleShowCards } from "./cards.js";
+import { Player } from "./player.js";
+import { createPlayerElements } from "./createPlayerElements.js";
 
-class Player {
-  constructor(name, hand = [], showCards = true) {
-    this.name = name;
-    this.hand = hand;
-    this.showCards = showCards;
-  }
-}
-
-// Hardcoded Players
 const playersSet = [
   new Player("Zoe"),
   new Player("Mike"),
@@ -34,112 +25,30 @@ const removePlayerBtn = document.getElementById("removePlayerBtn");
 const renderPlayers = (numberOfPlayers = 4) => {
   createPlayerElements(
     playersContainer,
-    (playerContainer, index) =>
-      calculatePlayerPosition(
-        playerContainer,
-        index,
-        tableWidth,
-        tableHeight,
-        numberOfPlayers
-      ),
-    toggleShowCards,
+    players,
+    tableWidth,
+    tableHeight,
     numberOfPlayers
   );
 };
 
+// Initial render with default players
+renderPlayers(numberOfPlayers);
+
 addPlayerBtn.addEventListener("click", () => {
   if (numberOfPlayers < playersSet.length) {
     numberOfPlayers++;
-    renderPlayers(numberOfPlayers);
     players = playersSet.slice(0, numberOfPlayers);
+    renderPlayers(numberOfPlayers);
   }
 });
 
 removePlayerBtn.addEventListener("click", () => {
   if (numberOfPlayers > 1) {
     numberOfPlayers--;
-    renderPlayers(numberOfPlayers);
     players = playersSet.slice(0, numberOfPlayers);
+    renderPlayers(numberOfPlayers);
   }
 });
-
-export const createPlayerElements = (
-  playersContainer,
-  calculatePlayerPosition,
-  toggleShowCards,
-  numberOfPlayers = 4
-) => {
-  playersContainer.innerHTML = "";
-
-  playersSet.slice(0, numberOfPlayers).forEach((player, index) => {
-    // Create player element
-    const playerContainer = document.createElement("div");
-    playerContainer.classList.add("player");
-    // playerContainer.textContent = player.name;
-
-    // Create name display and input elements
-    const playerNameDisplay = document.createElement("span");
-    playerNameDisplay.textContent = player.name;
-    playerNameDisplay.classList.add("player-name-display");
-
-    const playerNameInput = document.createElement("input");
-    playerNameInput.type = "text";
-    playerNameInput.value = player.name;
-    playerNameInput.classList.add("player-name-input");
-    playerNameInput.style.display = "none"; // Hide the input by default
-
-    // Toggle between display and input on click
-    playerNameDisplay.addEventListener("click", () => {
-      playerNameDisplay.style.display = "none";
-      playerNameInput.style.display = "block";
-      playerNameInput.focus();
-    });
-
-    playerNameInput.addEventListener("blur", () => {
-      playerNameDisplay.style.display = "block";
-      playerNameInput.style.display = "none";
-      player.name = playerNameInput.value;
-      playerNameDisplay.textContent = player.name;
-    });
-
-    // Create players' cards container
-    const playerCards = document.createElement("div");
-    playerCards.classList.add("cards--player");
-    playerCards.id = `cards--player-${player.name
-      .replace(/\s/g, "")
-      .toLowerCase()}`;
-
-    // Create individual card elements
-    const [card1, card2] = Array.from({ length: 2 }, () => {
-      const card = document.createElement("div");
-      card.classList.add("card");
-      if (player.hand.length === 0) {
-        card.classList.add("card--outline");
-      }
-      return card;
-    });
-
-    // Append cards to the player's card container
-    playerContainer.appendChild(playerNameDisplay);
-    playerContainer.appendChild(playerNameInput);
-    playerCards.appendChild(card1);
-    playerCards.appendChild(card2);
-    playerContainer.appendChild(playerCards);
-
-    // Add player to table
-    playersContainer.appendChild(playerContainer);
-
-    // Set player position
-    const { x, y, angle } = calculatePlayerPosition(playerContainer, index);
-    playerContainer.style.left = `${x}px`;
-    playerContainer.style.top = `${y}px`;
-    playerContainer.style.transform = `rotate(${angle - 90}deg)`;
-
-    // Add event listener to toggle showCards
-    playerContainer.addEventListener("click", () =>
-      toggleShowCards(player, playerCards)
-    );
-  });
-};
 
 export { players, Player };

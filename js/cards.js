@@ -104,12 +104,7 @@ export const toggleShowCards = (player, playerCards) => {
 
 // Function to update the player's card display based on the showCards property
 export const updatePlayerCards = (player, playerCards) => {
-  const cards = playerCards.querySelectorAll(".card");
-  cards.forEach((card) => {
-    if (player.showCards) {
-      card.classList.remove("card--hidden");
-    } else {
-      card.classList.add("card--hidden");
-    }
+  playerCards.querySelectorAll(".card").forEach((card) => {
+    card.classList.toggle("card--hidden", !player.showCards);
   });
 };

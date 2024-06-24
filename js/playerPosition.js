@@ -1,4 +1,4 @@
-export const calculatePlayerPosition = (
+const calculatePlayerPosition = (
   playerContainer,
   index,
   tableWidth,
@@ -18,3 +18,5 @@ export const calculatePlayerPosition = (
   const y = Math.sin(radians) * radius + tableHeight / 2 - playerHeight / 2;
   return { x, y, angle };
 };
+
+export { calculatePlayerPosition };
