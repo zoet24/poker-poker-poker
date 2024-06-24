@@ -1,3 +1,6 @@
+import { calculatePlayerPosition } from "./tablePlayers.js";
+import { toggleShowCards } from "./cards.js";
+
 class Player {
   constructor(name, hand = [], showCards = true) {
     this.name = name;
@@ -7,7 +10,7 @@ class Player {
 }
 
 // Hardcoded Players
-const players = [
+const playersSet = [
   new Player("Zoe"),
   new Player("Mike"),
   new Player("Fran"),
@@ -18,17 +21,57 @@ const players = [
   new Player("Alex"),
 ];
 
-export { players, Player };
+let numberOfPlayers = 4;
+let players = playersSet.slice(0, numberOfPlayers);
+
+const playersContainer = document.getElementById("players");
+const table = document.getElementById("table");
+const tableWidth = table.offsetWidth;
+const tableHeight = table.offsetHeight;
+const addPlayerBtn = document.getElementById("addPlayerBtn");
+const removePlayerBtn = document.getElementById("removePlayerBtn");
+
+const renderPlayers = (numberOfPlayers = 4) => {
+  createPlayerElements(
+    playersContainer,
+    (playerContainer, index) =>
+      calculatePlayerPosition(
+        playerContainer,
+        index,
+        tableWidth,
+        tableHeight,
+        numberOfPlayers
+      ),
+    toggleShowCards,
+    numberOfPlayers
+  );
+};
+
+addPlayerBtn.addEventListener("click", () => {
+  if (numberOfPlayers < playersSet.length) {
+    numberOfPlayers++;
+    renderPlayers(numberOfPlayers);
+    players = playersSet.slice(0, numberOfPlayers);
+  }
+});
+
+removePlayerBtn.addEventListener("click", () => {
+  if (numberOfPlayers > 1) {
+    numberOfPlayers--;
+    renderPlayers(numberOfPlayers);
+    players = playersSet.slice(0, numberOfPlayers);
+  }
+});
 
 export const createPlayerElements = (
-  table,
+  playersContainer,
   calculatePlayerPosition,
   toggleShowCards,
   numberOfPlayers = 4
 ) => {
-  table.innerHTML = "";
+  playersContainer.innerHTML = "";
 
-  players.slice(0, numberOfPlayers).forEach((player, index) => {
+  playersSet.slice(0, numberOfPlayers).forEach((player, index) => {
     // Create player element
     const playerContainer = document.createElement("div");
     playerContainer.classList.add("player");
@@ -57,7 +100,7 @@ export const createPlayerElements = (
     playerContainer.appendChild(playerCards);
 
     // Add player to table
-    table.appendChild(playerContainer);
+    playersContainer.appendChild(playerContainer);
 
     // Set player position
     const { x, y, angle } = calculatePlayerPosition(playerContainer, index);
@@ -71,3 +114,5 @@ export const createPlayerElements = (
     );
   });
 };
+
+export { players, Player };

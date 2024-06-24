@@ -5,15 +5,11 @@ import { toggleShowCards } from "./cards.js";
 const table = document.getElementById("table");
 const tableWidth = table.offsetWidth;
 const tableHeight = table.offsetHeight;
-
-const addPlayerBtn = document.getElementById("addPlayerBtn");
-const removePlayerBtn = document.getElementById("removePlayerBtn");
-
-let currentNumberOfPlayers = 4; // Default number of players
+const playersContainer = document.getElementById("players");
 
 const renderPlayers = (numberOfPlayers = 4) => {
   createPlayerElements(
-    table,
+    playersContainer,
     (playerContainer, index) =>
       calculatePlayerPosition(
         playerContainer,
@@ -28,18 +24,4 @@ const renderPlayers = (numberOfPlayers = 4) => {
 };
 
 // Initial render with default players
-renderPlayers(currentNumberOfPlayers);
-
-addPlayerBtn.addEventListener("click", () => {
-  if (currentNumberOfPlayers < players.length) {
-    currentNumberOfPlayers++;
-    renderPlayers(currentNumberOfPlayers);
-  }
-});
-
-removePlayerBtn.addEventListener("click", () => {
-  if (currentNumberOfPlayers > 1) {
-    currentNumberOfPlayers--;
-    renderPlayers(currentNumberOfPlayers);
-  }
-});
+renderPlayers();

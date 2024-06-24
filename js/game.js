@@ -8,9 +8,10 @@ import {
 
 const deckElement = document.getElementById("deck");
 const burnElement = document.getElementById("burn");
-const playerListContainer = document.getElementById("player-list-container");
 const probabilityTableId = "probabilityTable";
 
+const addPlayerBtn = document.getElementById("addPlayerBtn");
+const removePlayerBtn = document.getElementById("removePlayerBtn");
 const buttonStart = document.getElementById("startGameBtn");
 const buttonDealPlayer = document.getElementById("dealPlayerCardsBtn");
 const buttonDealFlop = document.getElementById("dealFlopBtn");
@@ -50,6 +51,8 @@ class Game {
 
     deckElement.classList.remove("card--outline");
     deckElement.textContent = "Deck (" + this.deck.cards.length + ")";
+    addPlayerBtn.setAttribute("disabled", "");
+    removePlayerBtn.setAttribute("disabled", "");
     buttonStart.setAttribute("disabled", "");
     buttonDealPlayer.removeAttribute("disabled", "");
 
@@ -250,7 +253,6 @@ class Game {
 
     // Reset the UI
     document.getElementById("probabilityTable").innerHTML = "";
-    playerListContainer.innerHTML = "";
 
     const cards = document.querySelectorAll(".card");
 
@@ -267,6 +269,8 @@ class Game {
 
     deckElement.textContent = "Deck";
     burnElement.textContent = "Burn";
+    addPlayerBtn.removeAttribute("disabled", "");
+    removePlayerBtn.removeAttribute("disabled", "");
     buttonStart.removeAttribute("disabled", "");
     buttonDealPlayer.setAttribute("disabled", "");
     buttonDealFlop.setAttribute("disabled", "");
