@@ -68,6 +68,11 @@ body {
 .player--hidden {
   @apply border-dashed;
 }
+.player-name-input {
+  @apply rounded-full text-center;
+  width: 60px;
+  height: 60px;
+}
 
 .card {
   @apply bg-white border border-black font-bold m-1 flex justify-center items-center text-center rounded-md;

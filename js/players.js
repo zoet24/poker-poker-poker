@@ -75,7 +75,32 @@ export const createPlayerElements = (
     // Create player element
     const playerContainer = document.createElement("div");
     playerContainer.classList.add("player");
-    playerContainer.textContent = player.name;
+    // playerContainer.textContent = player.name;
+
+    // Create name display and input elements
+    const playerNameDisplay = document.createElement("span");
+    playerNameDisplay.textContent = player.name;
+    playerNameDisplay.classList.add("player-name-display");
+
+    const playerNameInput = document.createElement("input");
+    playerNameInput.type = "text";
+    playerNameInput.value = player.name;
+    playerNameInput.classList.add("player-name-input");
+    playerNameInput.style.display = "none"; // Hide the input by default
+
+    // Toggle between display and input on click
+    playerNameDisplay.addEventListener("click", () => {
+      playerNameDisplay.style.display = "none";
+      playerNameInput.style.display = "block";
+      playerNameInput.focus();
+    });
+
+    playerNameInput.addEventListener("blur", () => {
+      playerNameDisplay.style.display = "block";
+      playerNameInput.style.display = "none";
+      player.name = playerNameInput.value;
+      playerNameDisplay.textContent = player.name;
+    });
 
     // Create players' cards container
     const playerCards = document.createElement("div");
@@ -95,6 +120,8 @@ export const createPlayerElements = (
     });
 
     // Append cards to the player's card container
+    playerContainer.appendChild(playerNameDisplay);
+    playerContainer.appendChild(playerNameInput);
     playerCards.appendChild(card1);
     playerCards.appendChild(card2);
     playerContainer.appendChild(playerCards);
